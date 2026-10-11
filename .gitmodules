@@ -1,0 +1,3 @@
+[submodule "4.ProyectoFinal/mcic-inteligencia-negocios"]
+	path = 4.ProyectoFinal/mcic-inteligencia-negocios
+	url = git@github.com:Fozzy3/mcic-inteligencia-negocios.git
