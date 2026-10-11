@@ -1,9 +1,9 @@
 {
- "ventas_netas": 700001140.0,
+ "ventas_netas": 699375660.0,
  "meta_total": 1715000000,
- "unidades": 4196,
+ "unidades": 4192,
  "unidades_devueltas": 174,
- "tasa_devolucion_pct": 4.146806482364156,
+ "tasa_devolucion_pct": 4.150763358778626,
  "cumplimiento": [
   {
    "periodo": "2026-01",
@@ -57,7 +57,7 @@
    "periodo": "2026-02",
    "region": "Barranquilla",
    "meta": 55000000,
-   "ventas": 24334905.0
+   "ventas": 23709425.0
   },
   {
    "periodo": "2026-02",
@@ -190,17 +190,17 @@
   {
    "canal": "Web",
    "ventas": 234393545.0,
-   "pct": 33.48473761057018
+   "pct": 33.514684368626725
   },
   {
    "canal": "Marketplace",
    "ventas": 234334075.0,
-   "pct": 33.476241910120315
+   "pct": 33.5061810701276
   },
   {
    "canal": "Tienda",
-   "ventas": 231273520.0,
-   "pct": 33.03902047930951
+   "ventas": 230648040.0,
+   "pct": 32.979134561245665
   }
  ],
  "devolucion_categoria": [
@@ -210,7 +210,7 @@
   },
   {
    "categoria": "Accesorios",
-   "tasa": 4.376163873370578
+   "tasa": 4.392523364485982
   },
   {
    "categoria": "Oficina",
@@ -256,7 +256,7 @@
  "region_total": [
   {
    "region": "Barranquilla",
-   "ventas": 140461470.0,
+   "ventas": 139835990.0,
    "meta": 361000000
   },
   {

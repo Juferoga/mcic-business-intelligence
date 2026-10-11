@@ -23,7 +23,7 @@
         Ventas netas, devoluciones, mezcla de canales, cumplimiento de metas y comportamiento regional (enero--junio 2026).}}
       \vspace{0.2cm}
       \UDCard{UDLightGray}{UDRed!60}{\cardtitle{UDRed}{Qué se recibió}{\peq
-        5 CSV con datos sintéticos e incidencias intencionales. Las 12 incidencias están todas en \texttt{ventas}.}}
+        5 CSV con datos sintéticos e incidencias intencionales. Las 13 incidencias están todas en \texttt{ventas}.}}
     \end{column}
     \begin{column}{0.48\textwidth}
       \begin{tabular}{@{}lr@{}}
@@ -35,10 +35,10 @@
       \end{tabular}
       \vspace{0.25cm}
 
-      {\peq\color{UDSilver} Trabajo hecho en macOS: se entrega pipeline Python/SQLite verificado y guiones M de Power Query \textbf{sin ejecutar} en Power BI.}
+      {\peq\color{UDSilver} Se entrega pipeline Python/SQLite verificado y \texttt{NovaRetail360.pbix}: las consultas M se ejecutaron en Power BI y cuadran con el pipeline.}
     \end{column}
   \end{columns}
-  \note{Aclarar desde el inicio que no hay .pbix: Power BI Desktop no corre en macOS.}
+  \note{Contar que al ejecutar las consultas en Power BI apareció la fecha inexistente 2026-02-30 (V00312), que el pipeline aceptaba; se corrigió y las cifras ya la incluyen.}
 \end{frame}
 
 % ---------------------------------------------------------------- 3
@@ -63,9 +63,9 @@
   \begin{center}
   \begin{tikzpicture}[node distance=0.35cm]
     \node[paso] (a) {\textbf{1\,201}\\crudas};
-    \node[paso, right=of a, fill=UDGreen!8, draw=UDGreen] (b) {\textbf{1\,194}\\aceptadas};
-    \node[paso, right=of b, fill=UDRed!8, draw=UDRed] (c) {\textbf{7}\\auditoría};
-    \node[right=0.35cm of c, text width=3.4cm, font=\fontsize{7.5pt}{9pt}\selectfont] {1\,194 + 7 = 1\,201: el cuadre se verifica en el código.};
+    \node[paso, right=of a, fill=UDGreen!8, draw=UDGreen] (b) {\textbf{1\,193}\\aceptadas};
+    \node[paso, right=of b, fill=UDRed!8, draw=UDRed] (c) {\textbf{8}\\auditoría};
+    \node[right=0.35cm of c, text width=3.4cm, font=\fontsize{7.5pt}{9pt}\selectfont] {1\,193 + 8 = 1\,201: el cuadre se verifica en el código.};
     \draw[flecha] (a) -- (b); \draw[flecha] (b) -- (c);
   \end{tikzpicture}
   \end{center}
@@ -80,15 +80,15 @@
         Suma ingenua del archivo & 701\,679\,450 \\
         Venta repetida & $-1\,015\,920$ \\
         Cliente y producto inexistentes & $-2\,024\,160$ \\
-        Fecha vacía & $-168\,030$ \\
+        Fecha vacía o inexistente & $-793\,510$ \\
         Cantidad $-2$ y descuento 125\,\% & $+551\,800$ \\
         Precios imputados & $+978\,000$ \\
         \midrule
-        \textbf{Depurado} & \textbf{700\,001\,140} \\
+        \textbf{Depurado} & \textbf{699\,375\,660} \\
       \end{tabular}}
     \end{column}
     \begin{column}{0.4\textwidth}
-      \kpi{0,24\,\%}{diferencia entre ambos totales}{UDRed}
+      \kpi{0,33\,\%}{diferencia entre ambos totales}{UDRed}
       \vspace{0.2cm}
 
       {\peq Unos errores suman y otros restan: el total ``parece bien'' aunque la composición por región, canal o mes sea errónea.}
@@ -139,7 +139,7 @@
 \begin{frame}{Granularidad: por qué no unir metas a cada venta}{Fan-out medido en la base}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.3\textwidth}
-      \kpi{1\,194}{filas de ventas: una por transacción}{UDBlue}
+      \kpi{1\,193}{filas de ventas: una por transacción}{UDBlue}
       \vspace{0.15cm}
       \kpi{30}{filas de metas: una por mes y región}{UDBlue}
     \end{column}
@@ -149,7 +149,7 @@
 
       \UDCard{UDLightGray}{UDRed!60}{\cardtitle{UDRed}{Efecto sobre la suma de metas}{\peq
         Correcta: \$\,1\,715 millones\\
-        Con el JOIN directo: \$\,68\,377 millones (\textbf{39,9 veces})}}
+        Con el JOIN directo: \$\,68\,322 millones (\textbf{39,8 veces})}}
       \vspace{0.15cm}
 
       {\peq Regla: agregar ventas a (mes, región) \textbf{antes} de unir.}
@@ -198,10 +198,10 @@
       \includegraphics[width=\linewidth]{../salida/figuras/cumplimiento_heatmap.png}
     \end{column}
     \begin{column}{0.32\textwidth}
-      \kpi{40,8\,\%}{cumplimiento global (700,0 de 1\,715 millones)}{UDRed}
+      \kpi{40,8\,\%}{cumplimiento global (699,4 de 1\,715 millones)}{UDRed}
       \vspace{0.12cm}
 
-      {\peq 0 de 30 combinaciones cumplen. Entre regiones la diferencia es mínima: 38,9\,\% a 41,8\,\%.}
+      {\peq 0 de 30 combinaciones cumplen. Entre regiones la diferencia es mínima: 38,7\,\% a 41,8\,\%.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -237,8 +237,8 @@
       \UDCard{UDLightGray}{UDBorder}{\cardtitle{UDSilver}{Limitaciones}{\peq
         Datos sintéticos y 6 meses.\\
         Sin costos: ingreso, no margen.\\
-        7 registros rechazados y 2 precios imputados: confirmar con el dueño del dato.\\
-        Guiones M no ejecutados en Power BI.}}
+        8 registros rechazados y 2 precios imputados: confirmar con el dueño del dato.\\
+        Validado en Power BI (\texttt{NovaRetail360.pbix}).}}
     \end{column}
   \end{columns}
 \end{frame}

@@ -6,7 +6,8 @@ let
         and [descuento_n] <> null and List.Contains({0, 0.05, 0.10, 0.15}, [descuento_n]))),
     Motivo = Table.AddColumn(Rechazadas, "motivo_rechazo", each
         if [ocurrencia] > 1 then "R1 venta repetida"
-        else if [fecha_iso] = null then "R2 fecha vacía"
+        else if [fecha_iso] = null and ([fecha] = null or Text.Trim([fecha]) = "") then "R2 fecha vacía"
+        else if [fecha_iso] = null then "R2 fecha inexistente"   // p. ej. 2026-02-30: formato válido, día imposible
         else if [cliente_ok] = false then "R3 id_cliente inexistente"
         else if [precio_lista] = null then "R3 id_producto inexistente"
         else if [cantidad_n] = null or [cantidad_n] <= 0 then "R4 cantidad inválida"

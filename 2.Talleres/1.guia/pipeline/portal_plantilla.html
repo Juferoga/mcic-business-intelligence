@@ -103,7 +103,7 @@ footer{margin:60px 0 30px; padding-top:20px; border-top:1px solid var(--line); c
   <h1>NovaRetail 360: qué hicimos y cómo funciona</h1>
   <p class="lead">Una guía de laboratorio con cinco archivos CSV con errores, un reto de gerencia y tres entregables: limpiar los datos, modelarlos y consultarlos con SQL. Este portal explica el trabajo paso a paso, con los números reales de la base.</p>
   <div class="tiles" id="tiles"></div>
-  <div class="card blue" style="margin-top:22px"><b>Lo primero que hay que saber.</b> Todo se hizo y verificó en Python y SQLite. Las consultas de Power Query (M) están escritas pero <b>no se ejecutaron</b> en Power BI, porque Power BI Desktop no existe para macOS, y por eso no hay archivo <code>.pbix</code>. La guía acepta evidencias de las transformaciones y los datos depurados en ese caso.</div>
+  <div class="card blue" style="margin-top:22px"><b>Lo primero que hay que saber.</b> Todo se hizo y verificó en Python y SQLite, y después se reprodujo en Power BI Desktop (<code>NovaRetail360.pbix</code>: 8 consultas, 7 relaciones, 13 medidas y 3 páginas). Al ejecutar las consultas M apareció una fecha inexistente (<code>2026-02-30</code>, V00312) que el pipeline aceptaba; se corrigió y todas las cifras ya la incluyen.</div>
 </div></header>
 
 <section id="funciona"><div class="wrap">
@@ -147,7 +147,7 @@ footer{margin:60px 0 30px; padding-top:20px; border-top:1px solid var(--line); c
     <div class="card green"><h3>¿Por qué se imputa el precio y la cantidad no?</h3>
       <p>En 1 198 de 1 198 ventas con precio válido, el precio unitario es exactamente el <code>precio_lista</code> del catálogo. Hay evidencia para recuperar un precio. No hay nada parecido para cantidad ni descuento, así que esas filas se apartan.</p></div>
     <div class="card red"><h3>El total casi no cambia, la composición sí</h3>
-      <p>Sumar el archivo tal cual da 701 679 450. Depurado da 700 001 140: solo 0,24 % de diferencia, porque unos errores suman y otros restan. Validar un archivo mirando su total no sirve.</p></div>
+      <p>Sumar el archivo tal cual da 701 679 450. Depurado da 699 375 660: solo 0,33 % de diferencia, porque unos errores suman y otros restan. Validar un archivo mirando su total no sirve.</p></div>
   </div>
   <h3>Puente de conciliación</h3>
   <div class="scroll" style="max-height:none"><table class="bridge" id="puente"></table></div>
@@ -228,7 +228,7 @@ footer{margin:60px 0 30px; padding-top:20px; border-top:1px solid var(--line); c
   <div class="grid2">
     <div class="card red"><h3>Recomendación</h3>
       <ol style="margin:0; padding-left:1.2em">
-        <li><b>Validar cómo se definió la meta</b> antes de juzgar a las regiones. Un cumplimiento tan parejo (38,9 % a 41,8 %) sugiere una meta mal escalada, no un problema regional.</li>
+        <li><b>Validar cómo se definió la meta</b> antes de juzgar a las regiones. Un cumplimiento tan parejo (38,7 % a 41,8 %) sugiere una meta mal escalada, no un problema regional.</li>
         <li><b>Investigar Tecnología</b> (6,10 % de devoluciones) cruzando motivo y proveedor.</li>
         <li><b>Mantener los tres canales</b>: pesan lo mismo y el canal no discrimina.</li>
       </ol></div>
@@ -236,9 +236,9 @@ footer{margin:60px 0 30px; padding-top:20px; border-top:1px solid var(--line); c
       <ul style="margin:0; padding-left:1.2em">
         <li>Datos sintéticos y solo seis meses.</li>
         <li>Sin costos: es ingreso, no margen.</li>
-        <li>7 registros rechazados y 2 precios imputados; confirmar con el dueño del dato.</li>
+        <li>8 registros rechazados y 2 precios imputados; confirmar con el dueño del dato.</li>
         <li>Devoluciones sin fecha.</li>
-        <li>Guiones M no ejecutados en Power BI.</li>
+        <li>Validado en Power BI: <code>NovaRetail360.pbix</code> reproduce las cifras del pipeline.</li>
       </ul></div>
   </div>
 </div></section>
@@ -287,12 +287,12 @@ $("#tema").onclick = () => {
 // Tiles
 const cumGlobal = 100 * R.ventas_netas / R.meta_total;
 $("#tiles").innerHTML = [
-  ["1 194 / 1 201", "ventas aceptadas (7 a auditoría)", ""],
+  ["1 193 / 1 201", "ventas aceptadas (8 a auditoría)", ""],
   ["$ " + mm(R.ventas_netas) + " M", "ventas netas depuradas", ""],
   [nf(cumGlobal,1) + " %", "cumplimiento de metas · 0 de 30 cumplen", "warn"],
   [nf(R.tasa_devolucion_pct,2) + " %", "unidades devueltas", ""],
 ].map(([b, s, c]) => `<div class="tile ${c}"><b>${b}</b><span>${s}</span></div>`).join("");
-$("#cuadre").textContent = "1 194 + 7 = 1 201 ✓";
+$("#cuadre").textContent = "1 193 + 8 = 1 201 ✓";
 
 // Bitácora
 const tb = $("#bitacora tbody");
@@ -321,7 +321,8 @@ const puente = [
   ["Venta repetida V00240", -1015920], ["Cliente inexistente V00054", -1476960], ["Producto inexistente V00073", -547200],
   ["Fecha vacía V00039", -168030], ["Cantidad negativa V00093 (restaba)", 326800], ["Descuento 125 % V00167 (restaba)", 225000],
   ["Precio faltante V00141 (valía 0)", 358800], ["Precio negativo V00410 (restaba)", 619200],
-  ["Conjunto depurado", 700001140, null],
+  ["Fecha inexistente V00312 (2026-02-30)", -625480],
+  ["Conjunto depurado", 699375660, null],
 ];
 const mx = 1.6e6;
 $("#puente").innerHTML = puente.map(([t, v, d]) => {
@@ -334,9 +335,9 @@ $("#puente").innerHTML = puente.map(([t, v, d]) => {
 // Fan-out
 function fan(directo) {
   $("#b-directo").setAttribute("aria-pressed", directo); $("#b-agregado").setAttribute("aria-pressed", !directo);
-  $("#fan").textContent = directo ? "$ 68 377 millones" : "$ 1 715 millones";
+  $("#fan").textContent = directo ? "$ 68 322 millones" : "$ 1 715 millones";
   $("#fan-txt").textContent = directo
-    ? "Suma de meta_ventas tras unir a cada una de las 1 194 ventas: la meta se cuenta ~40 veces (39,9×). Es un error de fan-out."
+    ? "Suma de meta_ventas tras unir a cada una de las 1 193 ventas: la meta se cuenta ~40 veces (39,8×). Es un error de fan-out."
     : "Suma correcta: las ventas se agregan a (mes, región) y recién entonces se unen, así que cada meta aparece una sola vez (30 filas).";
 }
 $("#b-directo").onclick = () => fan(true); $("#b-agregado").onclick = () => fan(false); fan(true);

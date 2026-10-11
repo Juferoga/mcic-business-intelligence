@@ -32,13 +32,13 @@ regional, pero los archivos recibidos traen errores de calidad. Este informe doc
 datos, cómo se modeló la información y qué dicen los números una vez depurados.
 
 \begin{itemize}
-  \item \textbf{Calidad.} De 1\,201 filas de ventas se aceptaron 1\,194. Se corrigieron 5 por reglas
-        deterministas o con evidencia, se apartaron 7 a una tabla de auditoría (ninguna se borró) y se
-        registraron 12 incidencias con regla, evidencia, impacto y decisión.
-  \item \textbf{Ventas netas.} \cop{700,0} millones, \cop{737,6} millones brutos; el descuento promedio
+  \item \textbf{Calidad.} De 1\,201 filas de ventas se aceptaron 1\,193. Se corrigieron 5 por reglas
+        deterministas o con evidencia, se apartaron 8 a una tabla de auditoría (ninguna se borró) y se
+        registraron 13 incidencias con regla, evidencia, impacto y decisión.
+  \item \textbf{Ventas netas.} \cop{699,4} millones, \cop{736,9} millones brutos; el descuento promedio
         efectivo es 5,09\,\%.
   \item \textbf{Metas.} \rojo{Ninguna} de las 30 combinaciones mes--región alcanza su meta; el cumplimiento
-        global es 40,8\,\%, y varía muy poco entre regiones (38,9\,\% a 41,8\,\%).
+        global es 40,8\,\%, y varía muy poco entre regiones (38,7\,\% a 41,8\,\%).
   \item \textbf{Devoluciones.} 4,15\,\% de las unidades (4,28\,\% del valor); Tecnología concentra el
         problema con 6,10\,\%.
   \item \textbf{Canales.} Web, Marketplace y Tienda pesan prácticamente lo mismo (33,5\,\%, 33,5\,\% y 33,0\,\%).
@@ -52,9 +52,10 @@ sección~\ref{sec:indicadores}.
 
 \paragraph{Qué se entrega y qué no.} Se entrega el pipeline reproducible (Python y SQLite), las consultas M de
 Power Query equivalentes, la base \texttt{novaretail.db}, la bitácora, el diagrama entidad--relación y las
-consultas SQL. \rojo{No se entrega un archivo \texttt{.pbix}}: el trabajo se hizo en macOS, donde Power BI
-Desktop no existe, y los guiones M no se ejecutaron en Power BI. La guía admite en ese caso evidencias de las
-transformaciones y los datos depurados, que es lo que se aporta.
+consultas SQL, y el archivo \texttt{NovaRetail360.pbix} con las 8 consultas, 7 relaciones, 13 medidas y un informe
+de tres páginas (resumen ejecutivo, cumplimiento de metas y calidad de datos). Al ejecutar las consultas M en
+Power BI Desktop apareció una incidencia que la primera versión del pipeline no detectaba (la fecha inexistente
+\texttt{2026-02-30} de V00312); se corrigió el pipeline y todas las cifras de este informe ya la incluyen.
 
 %=============================================================================
 \section{Datos y método}
@@ -77,7 +78,7 @@ Archivo & Filas & Contenido \\
 
 El flujo es el mismo en todo el trabajo: se perfilan los datos, se aplican reglas explícitas, se separa lo
 rechazado en lugar de borrarlo y se verifica que \emph{aceptadas + rechazadas = crudas}
-($1\,194 + 7 = 1\,201$).
+($1\,193 + 8 = 1\,201$).
 
 \begin{figure}[H]
 \centering
@@ -85,7 +86,7 @@ rechazado en lugar de borrarlo y se verifica que \emph{aceptadas + rechazadas = 
   \node[caja] (a) {CSV\\crudos};
   \node[caja, right=of a] (b) {Perfilamiento\\y reglas R1--R9};
   \node[hecho, right=of b] (c) {Ventas\\limpias};
-  \node[caja, below=0.5cm of c] (d) {Auditoría\\(7 rechazadas)};
+  \node[caja, below=0.5cm of c] (d) {Auditoría\\(8 rechazadas)};
   \node[caja, right=of c] (e) {SQLite\\operacional};
   \node[caja, right=of e] (f) {Esquema\\estrella};
   \draw[flecha] (a) -- (b); \draw[flecha] (b) -- (c); \draw[flecha] (b) |- (d);
@@ -126,6 +127,7 @@ Todas las incidencias están en \texttt{ventas\_sucias.csv}.
 10 & V00213 & R7 canal & \texttt{WEB} & Normalizar a \texttt{Web} & Corregida \\
 11 & V00240 & R1 unicidad & fila repetida & Conservar la primera, auditar la segunda & Auditoría \\
 12 & V00410 & R6 precio $>0$ & $-20\,000$ & Imputar \texttt{precio\_lista} (289\,600; importe 579\,200) & Corregida \\
+13 & V00312 & R2 fecha válida & \texttt{2026-02-30} & Rechazar; la fecha no existe y no se inventa el día & Auditoría \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -151,7 +153,7 @@ equivalente para cantidad o descuento, así que esos registros se rechazan.
 
 \subsection{Auditoría de registros}
 
-Los siete registros rechazados se conservan en \texttt{auditoria\_\allowbreak rechazados.csv} (y en la tabla
+Los ocho registros rechazados se conservan en \texttt{auditoria\_\allowbreak rechazados.csv} (y en la tabla
 \texttt{auditoria\_\allowbreak rechazados} de la base) con su motivo. Ninguna devolución apunta a una venta rechazada.
 
 \begin{table}[H]
@@ -164,11 +166,12 @@ Motivo & Registros \\
 R4 cantidad inválida (V00093, V00116) & 2 \\
 R1 venta repetida (V00240) & 1 \\
 R2 fecha vacía (V00039) & 1 \\
+R2 fecha inexistente (V00312, \texttt{2026-02-30}) & 1 \\
 R3 \texttt{id\_cliente} inexistente (V00054) & 1 \\
 R3 \texttt{id\_producto} inexistente (V00073) & 1 \\
 R5 descuento fuera de rango (V00167) & 1 \\
 \midrule
-\textbf{Total} & \textbf{7} \\
+\textbf{Total} & \textbf{8} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -207,13 +210,14 @@ Quitar cantidad negativa V00093 (restaba) & $+326\,800$ \\
 Quitar descuento 125\,\% V00167 (restaba) & $+225\,000$ \\
 Imputar precio faltante V00141 (valía 0) & $+358\,800$ \\
 Imputar precio negativo V00410 (restaba) & $+619\,200$ \\
+Quitar fecha inexistente V00312 (\texttt{2026-02-30}) & $-625\,480$ \\
 \midrule
-\textbf{Conjunto depurado} & \textbf{700\,001\,140} \\
+\textbf{Conjunto depurado} & \textbf{699\,375\,660} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-La diferencia total es de solo 0,24\,\%, porque unos errores suman y otros restan. Por eso no sirve validar un
+La diferencia total es de solo 0,33\,\%, porque unos errores suman y otros restan. Por eso no sirve validar un
 archivo mirando su total: los errores quedan escondidos hasta que se mira la composición por región, canal o mes.
 
 \subsection{Reproducibilidad}
@@ -305,7 +309,7 @@ disponible: de él se puede subir a cualquier agregado (día, región, canal, ca
 
 \textbf{Metas:} una fila por mes y región. Si se une \texttt{metas} directamente a cada transacción, el valor de la
 meta se repite en cada venta de su mes y región: en promedio 39,8 veces. Al sumar la meta sobre ese resultado, el
-total deja de ser \cop{1\,715} millones y pasa a \cop{68\,377} millones, es decir 39,9 veces más (se verificó
+total deja de ser \cop{1\,715} millones y pasa a \cop{68\,322} millones, es decir 39,8 veces más (se verificó
 en la base). El mismo error afecta a cualquier unión entre tablas de granularidad distinta: se llama
 \emph{fan-out}. La regla es agregar las ventas al grano de la meta (mes, región) \emph{antes} de unir.
 
@@ -361,9 +365,9 @@ Bucaramanga & 142,8 & 342,0 & 41,8\,\% \\
 Cali & 147,9 & 355,0 & 41,7\,\% \\
 Bogotá & 131,2 & 317,0 & 41,4\,\% \\
 Medellín & 137,6 & 340,0 & 40,5\,\% \\
-Barranquilla & 140,5 & 361,0 & 38,9\,\% \\
+Barranquilla & 139,8 & 361,0 & 38,7\,\% \\
 \midrule
-\textbf{Total} & \textbf{700,0} & \textbf{1\,715,0} & \textbf{40,8\,\%} \\
+\textbf{Total} & \textbf{699,4} & \textbf{1\,715,0} & \textbf{40,8\,\%} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -395,7 +399,7 @@ P038 & Producto 038 & Oficina & 113 & 32,3 \\
 \end{figure}
 
 \textbf{Q4. Tasa de devoluciones por unidades.} Se calcula con dos agregaciones independientes que luego se dividen:
-174 unidades devueltas sobre 4\,196 vendidas, \textbf{4,15\,\%}. Si se uniera \texttt{devoluciones} a \texttt{ventas} y se
+174 unidades devueltas sobre 4\,192 vendidas, \textbf{4,15\,\%}. Si se uniera \texttt{devoluciones} a \texttt{ventas} y se
 sumara \texttt{cantidad}, una venta con varias devoluciones repetiría sus unidades vendidas. En estos datos cada venta
 tiene como máximo una devolución, así que el riesgo no se materializa, pero la consulta se escribió para no depender de eso.
 
@@ -462,17 +466,17 @@ mismos números que las consultas propias en ingreso por región y mes y en cump
 Indicador & Valor & Lectura \\
 \midrule
 \textbf{I1. Cumplimiento de metas} (ventas netas / meta) & 40,8\,\% \; (0 de 30 cumplen) &
-  Uniforme entre regiones (38,9\,\% a 41,8\,\%); no hay una región ``problema''. \\
+  Uniforme entre regiones (38,7\,\% a 41,8\,\%); no hay una región ``problema''. \\
 \textbf{I2. Tasa de devolución en unidades} & 4,15\,\% \; (valor: 4,28\,\%) &
-  Tecnología 6,10\,\%, Accesorios 4,38\,\%, Oficina 3,32\,\%, Hogar 2,75\,\%. Por región, de 2,43\,\% (Bucaramanga) a 4,90\,\% (Cali). \\
+  Tecnología 6,10\,\%, Accesorios 4,39\,\%, Oficina 3,32\,\%, Hogar 2,75\,\%. Por región, de 2,43\,\% (Bucaramanga) a 4,90\,\% (Cali). \\
 \textbf{I3. Mezcla de canales} (participación en ventas netas) & 33,5\,\% / 33,5\,\% / 33,0\,\% &
   Sin dependencia de un canal; ningún canal es la palanca obvia de crecimiento. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Otros datos de contexto: ticket promedio de \cop{586\,266} por transacción, 120 de 120 clientes activos, 55\,\% de
-las ventas en el segmento Corporativo (que es la mitad de los clientes), y descuentos por \cop{37,6} millones
+Otros datos de contexto: ticket promedio de \cop{586\,233} por transacción, 120 de 120 clientes activos, 55\,\% de
+las ventas en el segmento Corporativo (que es la mitad de los clientes), y descuentos por \cop{37,5} millones
 (5,09\,\% del bruto).
 
 \subsection{Recomendación ejecutiva}
@@ -496,13 +500,13 @@ las ventas en el segmento Corporativo (que es la mitad de los clientes), y descu
   \item \textbf{Seis meses} (enero a junio de 2026): no hay estacionalidad ni comparación interanual.
   \item \textbf{Sin costos}: se mide ingreso, no margen; una categoría con muchas devoluciones puede ser
         más o menos rentable que lo que sugieren sus ingresos.
-  \item \textbf{Decisiones de limpieza.} Se rechazaron 7 registros (0,58\,\% de las filas) y se imputaron 2 precios.
-        Ninguna decisión mueve el total más de 0,24\,\%; aun así, las 5 reglas con rechazo deben confirmarse con el
+  \item \textbf{Decisiones de limpieza.} Se rechazaron 8 registros (0,67\,\% de las filas) y se imputaron 2 precios.
+        En conjunto, las decisiones mueven el total un 0,33\,\%; aun así, las reglas con rechazo deben confirmarse con el
         dueño del dato.
   \item \textbf{Devoluciones sin fecha}: la tasa se asigna al periodo de la venta original y no se puede
         analizar la demora entre venta y devolución.
-  \item \textbf{No se validó en Power BI}: los guiones M son equivalentes al pipeline en Python y se escribieron con
-        cuidado, pero no se ejecutaron.
+  \item \textbf{Validación cruzada}: los guiones M se ejecutaron en Power BI Desktop y reproducen las cifras del pipeline en Python
+        (1\,193 ventas y \cop{699\,375\,660} netos); esa ejecución fue la que detectó la fecha inexistente de V00312.
   \item \textbf{Recuperación de precio}: la regla R6 supone que las ventas se facturan a precio de lista; se verificó
         en 1\,198 de 1\,198 casos, pero podría dejar de cumplirse con datos reales.
 \end{itemize}
@@ -525,7 +529,8 @@ make informe presentacion                                     # PDF con la plant
 Ruta & Contenido \\
 \midrule
 \texttt{pipeline/} & Limpieza (\texttt{limpieza.py}) y figuras (\texttt{graficos.py}) \\
-\texttt{power\_query/} & Consultas M equivalentes (no ejecutadas en Power BI) \\
+\texttt{power\_query/} & Consultas M equivalentes (ejecutadas en Power BI Desktop) \\
+\texttt{NovaRetail360.pbix} & Archivo de Power BI: consultas, modelo, medidas DAX e informe de tres páginas \\
 \texttt{sql/} & Esquema, estrella, cinco consultas y consultas de calidad \\
 \texttt{salida/} & Datos limpios, auditoría, bitácora, base SQLite, figuras, resultados \\
 \texttt{informe/}, \texttt{presentacion/} & Fuentes LaTeX y PDF \\

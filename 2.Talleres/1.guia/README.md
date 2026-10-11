@@ -10,7 +10,9 @@ Guía de laboratorio de Inteligencia de Negocios (Power Query, modelo relacional
 | Portal explicativo | `portal/index.html` (abrir en el navegador) |
 | Bitácora de calidad, auditoría, datos limpios, SQLite | `salida/` |
 | Consultas SQL (esquema, estrella, 5 consultas, calidad) | `sql/` |
-| Power Query (M), **no ejecutado en Power BI** | `power_query/` |
+| Power Query (M), ejecutado en Power BI | `power_query/` |
+| **Archivo Power BI** (8 consultas, 7 relaciones, 13 medidas, 3 páginas) | `NovaRetail360.pbix` |
+| Capturas del informe y del modelo en Power BI | `evidencias_powerbi/` |
 
 Reproducir todo: `make todo` (requiere `python3`, `uv`, `tectonic`, y el manual de marca en `~/repos/ud/maestria/mcic/.UniversidadDistrital-manual-marca`).
 El portal se regenera con `python3 pipeline/portal.py`.

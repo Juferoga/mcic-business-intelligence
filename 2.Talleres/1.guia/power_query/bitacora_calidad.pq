@@ -2,6 +2,7 @@
 let
     Origen = Csv.Document(File.Contents(RutaDatos & "bitacora_calidad.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
     Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars = true]),
-    Tipos = Table.TransformColumnTypes(Encabezados, List.Transform(Table.ColumnNames(Encabezados), each {_, type text}))
+    Tipos = Table.TransformColumnTypes(Encabezados, List.Transform(Table.ColumnNames(Encabezados), each {_, type text})),
+    Orden = Table.TransformColumnTypes(Tipos, {{"n", Int64.Type}})
 in
-    Tipos
+    Orden

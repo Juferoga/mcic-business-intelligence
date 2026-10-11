@@ -14,6 +14,7 @@ import csv
 import re
 import sqlite3
 from collections import Counter, defaultdict
+from datetime import date
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -103,6 +104,15 @@ for r in ventas:
                    f"Día {dd} > 12: solo puede ser dd/mm/aaaa; el resto del archivo está en aaaa-mm-dd",
                    "Con configuración regional en-US se leería mal o como error",
                    f"Convertir a {r['fecha']} (conversión determinista, no es un reemplazo)", "corregido")
+    try:
+        date.fromisoformat(r["fecha"])
+    except ValueError:
+        incidencia(idv, "R2 Fecha válida en el calendario", "fecha", r["fecha"],
+                   "Formato aaaa-mm-dd correcto pero la fecha no existe (p. ej. 30 de febrero)",
+                   "Se asignaría a un mes con una fecha imposible; Power Query la convierte en error",
+                   "Rechazar; no se inventa el día correcto", "auditoría")
+        rechazar(r, "R2 fecha inexistente")
+        continue
 
     # R3 · integridad referencial
     if r["id_cliente"] not in ids_cliente:

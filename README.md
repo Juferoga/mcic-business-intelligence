@@ -51,7 +51,7 @@ make todo        # datos, portal, informe, presentación y revisión del PDF
 make paquete     # genera paquete_powerbi.zip para llevar a Power BI (Windows)
 ```
 
-> Las consultas Power Query (M) están escritas pero **no se ejecutaron en Power BI**.
+> El archivo `2.Talleres/1.guia/NovaRetail360.pbix` contiene las consultas Power Query, el modelo, las medidas DAX y el informe; las capturas están en `2.Talleres/1.guia/evidencias_powerbi/`.
 
 **Contacto**
 

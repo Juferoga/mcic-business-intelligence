@@ -5,4 +5,5 @@ V00073,2026-03-27,C0099,P999,Web,6,91200,0,R3 id_producto inexistente
 V00093,2026-03-18,C0065,P020,Tienda,-2,172000,0.05,R4 cantidad inválida
 V00116,2026-04-18,C0050,P038,Marketplace,,304300,0,R4 cantidad inválida
 V00167,2026-06-10,C0028,P017,Web,6,150000,1.25,R5 descuento fuera de rango
+V00312,2026-02-30,C0048,P019,Tienda,4,164600,0.05,R2 fecha inexistente
 V00240,2026-04-27,C0048,P035,Marketplace,4,282200,0.1,R1 venta repetida

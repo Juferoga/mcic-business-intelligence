@@ -1,7 +1,8 @@
 # Power Query (M) — NovaRetail 360
 
-Consultas equivalentes a `pipeline/limpieza.py`. **No se ejecutaron en Power BI Desktop** (el desarrollo se hizo en macOS,
-donde Power BI Desktop no existe); el pipeline en Python/SQLite sí se ejecutó y cuadra.
+Consultas equivalentes a `pipeline/limpieza.py`. **Se ejecutaron en Power BI Desktop** (`../NovaRetail360.pbix`) y cuadran con el pipeline.
+Al ejecutarlas apareció la fecha inexistente `2026-02-30` (V00312), que la primera versión del pipeline aceptaba;
+ahora ambos la rechazan con el motivo `R2 fecha inexistente`.
 La guía paso a paso (con la ruta para Mac, comprobaciones y DAX) está en `../guia-powerbi/guia_powerbi.pdf`.
 
 Orden y nombres EXACTOS de las consultas (las demás las referencian por nombre):
@@ -13,4 +14,4 @@ Orden y nombres EXACTOS de las consultas (las demás las referencian por nombre)
 5. `devoluciones`
 
 Principio: `ventas_base` aplica solo tipificación y reglas deterministas; `ventas_limpias` y `auditoria_rechazados`
-parten de la misma tabla con la condición complementaria, de modo que **limpias + rechazadas = crudas** (1 194 + 7 = 1 201).
+parten de la misma tabla con la condición complementaria, de modo que **limpias + rechazadas = crudas** (1 193 + 8 = 1 201).
