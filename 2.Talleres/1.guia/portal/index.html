@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal NovaRetail 360</title>
+<style>
+:root{
+  --bg:#fbfaf7; --surface:#ffffff; --ink:#373435; --ink2:#5b5758; --muted:#8a8586; --line:#e4e0d8;
+  --red:#ED3237; --red-d:#A61C22; --blue:#1291C0; --blue-d:#0b6d92; --green:#047857; --gold:#B49739; --code:#f3f1ea;
+  --tint-red:#fdecec; --tint-blue:#e7f4fa; --tint-green:#e5f5ee;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161415; --surface:#201d1e; --ink:#ece9e6; --ink2:#c0bbb8; --muted:#8f8a88; --line:#363233;
+    --red:#ff6065; --red-d:#ff8a8d; --blue:#4db7dc; --blue-d:#7ccdea; --green:#4fd1a1; --gold:#d6b85a; --code:#1b1819;
+    --tint-red:#33191a; --tint-blue:#142a33; --tint-green:#14301f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161415; --surface:#201d1e; --ink:#ece9e6; --ink2:#c0bbb8; --muted:#8f8a88; --line:#363233;
+  --red:#ff6065; --red-d:#ff8a8d; --blue:#4db7dc; --blue-d:#7ccdea; --green:#4fd1a1; --gold:#d6b85a; --code:#1b1819;
+  --tint-red:#33191a; --tint-blue:#142a33; --tint-green:#14301f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+body{margin:0; background:var(--bg); color:var(--ink); font:17px/1.6 Cambria,"Times New Roman",Georgia,serif}
+h1,h2,h3{font-family:Cambria,Georgia,serif; line-height:1.2; margin:0 0 .5em}
+h1{font-size:clamp(2rem,5vw,3.1rem)} h2{font-size:1.75rem} h3{font-size:1.15rem}
+p{margin:.5em 0 1em}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.86em}
+code{background:var(--code); padding:.1em .35em; border-radius:4px}
+a{color:var(--blue-d)}
+.wrap{max-width:1040px; margin:0 auto; padding:0 16px}
+nav{position:sticky; top:0; z-index:5; background:color-mix(in srgb,var(--bg) 92%,transparent); backdrop-filter:blur(6px); border-bottom:1px solid var(--line)}
+nav .wrap{display:flex; gap:6px; align-items:center; overflow-x:auto; padding-top:8px; padding-bottom:8px}
+nav a{white-space:nowrap; text-decoration:none; color:var(--ink2); padding:6px 12px; border-radius:99px; font:600 .85rem system-ui,sans-serif}
+nav a:hover,nav a.on{background:var(--tint-red); color:var(--red-d)}
+nav button{margin-left:auto; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:99px; padding:5px 12px; font:600 .8rem system-ui,sans-serif; cursor:pointer}
+header.hero{padding:56px 0 28px; border-bottom:4px solid var(--red)}
+.kick{font:700 .78rem system-ui,sans-serif; letter-spacing:.12em; text-transform:uppercase; color:var(--red-d)}
+.lead{font-size:1.2rem; color:var(--ink2); max-width:760px}
+.tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:26px 0 0}
+.tile{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
+.tile b{display:block; font:700 2rem Cambria,Georgia,serif; color:var(--blue-d)}
+.tile.warn b{color:var(--red-d)}
+.tile span{font:.85rem system-ui,sans-serif; color:var(--ink2)}
+section{padding:46px 0 10px}
+section>.wrap>h2{border-left:5px solid var(--red); padding-left:12px}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:14px 0}
+.card.red{border-color:var(--red); background:var(--tint-red)}
+.card.blue{border-color:var(--blue); background:var(--tint-blue)}
+.card.green{border-color:var(--green); background:var(--tint-green)}
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px}
+.steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; counter-reset:s; margin:18px 0}
+.step{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px; position:relative; counter-increment:s}
+.step:before{content:counter(s); position:absolute; top:-11px; left:12px; background:var(--red); color:#fff; font:700 .8rem system-ui; width:22px; height:22px; border-radius:50%; display:grid; place-items:center}
+.step h3{font-size:1rem; margin-top:4px} .step p{font:.86rem/1.45 system-ui,sans-serif; color:var(--ink2); margin:0}
+table{border-collapse:collapse; width:100%; font:.9rem/1.4 system-ui,sans-serif}
+th,td{padding:7px 9px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top}
+th{font-weight:700; color:var(--ink2); position:sticky; top:0; background:var(--surface)}
+td.n,th.n{text-align:right; font-variant-numeric:tabular-nums}
+.scroll{overflow:auto; max-height:420px; border:1px solid var(--line); border-radius:10px; background:var(--surface)}
+.pill{display:inline-block; font:700 .72rem system-ui; padding:2px 9px; border-radius:99px}
+.pill.c{background:var(--tint-green); color:var(--green)} .pill.a{background:var(--tint-red); color:var(--red-d)}
+.btns{display:flex; gap:6px; flex-wrap:wrap; margin:10px 0}
+.btns button,.tabs button{border:1px solid var(--line); background:var(--surface); color:var(--ink); padding:6px 14px; border-radius:99px; font:600 .84rem system-ui; cursor:pointer}
+.btns button[aria-pressed=true],.tabs button[aria-selected=true]{background:var(--red); border-color:var(--red); color:#fff}
+.tabs{display:flex; gap:6px; flex-wrap:wrap; margin:12px 0}
+tr.bi{cursor:pointer} tr.bi:hover{background:var(--tint-blue)}
+tr.det td{background:var(--code); font-size:.86rem}
+pre{background:var(--code); padding:14px 16px; border-radius:10px; overflow:auto; border-left:4px solid var(--red); margin:10px 0}
+.bar{height:10px; border-radius:5px; background:var(--blue)} .bar.neg{background:var(--red)}
+.bridge td{vertical-align:middle}
+.heat{display:grid; grid-template-columns:110px repeat(6,1fr); gap:3px; font:.82rem system-ui,sans-serif; margin:14px 0}
+.heat div{padding:12px 4px; text-align:center; border-radius:6px; position:relative}
+.heat .h{background:none; color:var(--ink2); font-weight:700; padding:4px} .heat .r{text-align:right; padding-right:8px; background:none; color:var(--ink2); font-weight:700}
+.heat .c:hover{outline:2px solid var(--ink)}
+#tip{position:fixed; pointer-events:none; background:var(--ink); color:var(--bg); padding:7px 10px; border-radius:8px; font:.8rem/1.35 system-ui; z-index:9; display:none; max-width:240px}
+.hbar{display:grid; grid-template-columns:110px 1fr 70px; gap:10px; align-items:center; margin:6px 0; font:.88rem system-ui}
+.hbar .t{background:var(--line); border-radius:5px; height:14px} .hbar .f{height:14px; border-radius:5px; background:var(--blue)} .hbar .f.hl{background:var(--red)}
+svg text{font-family:system-ui,sans-serif; fill:var(--ink)}
+.er rect.b{fill:var(--surface); stroke:var(--line); stroke-width:1.4} .er rect.hd{fill:var(--tint-red)} .er rect.hd2{fill:var(--tint-blue)}
+.er line{stroke:var(--ink2); stroke-width:1.6} .er .dash{stroke-dasharray:5 4}
+.er .card-t{fill:var(--red-d); font-weight:700; font-size:12px}
+.toggle{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+.big{font:700 2rem Cambria,Georgia,serif}
+.kv{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font:.9rem system-ui}
+.kv b{color:var(--ink2)}
+footer{margin:60px 0 30px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font:.85rem system-ui}
+@media (max-width:620px){ .heat{grid-template-columns:78px repeat(6,1fr); font-size:.7rem} .hbar{grid-template-columns:80px 1fr 56px} }
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a href="#resumen">Resumen</a><a href="#funciona">Cómo funciona</a><a href="#calidad">Calidad</a>
+  <a href="#modelo">Modelo</a><a href="#sql">SQL</a><a href="#resultados">Resultados</a><a href="#reproducir">Reproducir</a>
+  <button id="tema" type="button" aria-label="Cambiar tema">Tema</button>
+</div></nav>
+
+<header class="hero" id="resumen"><div class="wrap">
+  <div class="kick">MCIC · Inteligencia de Negocios · Taller 1</div>
+  <h1>NovaRetail 360: qué hicimos y cómo funciona</h1>
+  <p class="lead">Una guía de laboratorio con cinco archivos CSV con errores, un reto de gerencia y tres entregables: limpiar los datos, modelarlos y consultarlos con SQL. Este portal explica el trabajo paso a paso, con los números reales de la base.</p>
+  <div class="tiles" id="tiles"></div>
+  <div class="card blue" style="margin-top:22px"><b>Lo primero que hay que saber.</b> Todo se hizo y verificó en Python y SQLite. Las consultas de Power Query (M) están escritas pero <b>no se ejecutaron</b> en Power BI, porque Power BI Desktop no existe para macOS, y por eso no hay archivo <code>.pbix</code>. La guía acepta evidencias de las transformaciones y los datos depurados en ese caso.</div>
+</div></header>
+
+<section id="funciona"><div class="wrap">
+  <h2>Cómo funciona</h2>
+  <p>El trabajo es una cadena corta. Cada eslabón deja un archivo que se puede abrir y revisar, y el paso siguiente solo usa ese archivo.</p>
+  <div class="steps">
+    <div class="step"><h3>CSV crudos</h3><p>Cinco archivos, 1 201 filas de ventas con errores intencionales.</p></div>
+    <div class="step"><h3>limpieza.py</h3><p>Aplica reglas R1–R9, corrige lo recuperable y aparta el resto. Verifica que aceptadas + rechazadas = crudas.</p></div>
+    <div class="step"><h3>novaretail.db</h3><p>SQLite con el modelo operacional, la capa de auditoría y el esquema estrella.</p></div>
+    <div class="step"><h3>Consultas SQL</h3><p>Cinco consultas de negocio y las de calidad, cada una comentada.</p></div>
+    <div class="step"><h3>Informe, diapositivas, portal</h3><p>Se generan desde la misma base, así las cifras no se desincronizan.</p></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>Por qué dos implementaciones</h3>
+      <p>La guía pide Power Query. En macOS no se puede ejecutar, así que la limpieza se programó en Python (verificable) y se tradujo a <code>power_query/*.pq</code>. Cada regla tiene su equivalente:</p>
+      <table><tr><th>Python</th><th>Power Query (M)</th></tr>
+        <tr><td><code>canal.lower()</code> + mapa</td><td><code>Text.Proper(Text.Trim(_))</code></td></tr>
+        <tr><td>regex <code>dd/mm/aaaa</code></td><td><code>Date.FromText</code> con cultura <code>es-CO</code></td></tr>
+        <tr><td>claves en conjunto</td><td><code>Table.NestedJoin</code> tipo <code>LeftOuter</code></td></tr>
+        <tr><td><code>rechazados.append</code></td><td>consulta <code>auditoria_rechazados</code> (complemento exacto)</td></tr>
+      </table>
+    </div>
+    <div class="card"><h3>La idea central</h3>
+      <p><b>Nada se borra en silencio.</b> Cada registro que no pasa una regla va a una tabla de auditoría con su motivo. Cada corrección se documenta con su evidencia. Y se comprueba la cuenta:</p>
+      <p class="big" id="cuadre"></p>
+    </div>
+  </div>
+</div></section>
+
+<section id="calidad"><div class="wrap">
+  <h2>Parte A · Calidad de datos</h2>
+  <p>Cuatro archivos salieron limpios. Las 12 incidencias están en <code>ventas_sucias.csv</code>. Pulsa una fila para ver la evidencia, el impacto y la decisión.</p>
+  <div class="btns" id="filtros" role="group" aria-label="Filtrar incidencias">
+    <button type="button" data-f="todas" aria-pressed="true">Todas (12)</button>
+    <button type="button" data-f="corregido" aria-pressed="false">Corregidas (5)</button>
+    <button type="button" data-f="auditoría" aria-pressed="false">A auditoría (7)</button>
+  </div>
+  <div class="scroll"><table id="bitacora"><thead><tr><th>#</th><th>Registro</th><th>Regla</th><th>Valor observado</th><th>Acción</th></tr></thead><tbody></tbody></table></div>
+
+  <div class="grid2" style="margin-top:20px">
+    <div class="card green"><h3>¿Por qué se imputa el precio y la cantidad no?</h3>
+      <p>En 1 198 de 1 198 ventas con precio válido, el precio unitario es exactamente el <code>precio_lista</code> del catálogo. Hay evidencia para recuperar un precio. No hay nada parecido para cantidad ni descuento, así que esas filas se apartan.</p></div>
+    <div class="card red"><h3>El total casi no cambia, la composición sí</h3>
+      <p>Sumar el archivo tal cual da 701 679 450. Depurado da 700 001 140: solo 0,24 % de diferencia, porque unos errores suman y otros restan. Validar un archivo mirando su total no sirve.</p></div>
+  </div>
+  <h3>Puente de conciliación</h3>
+  <div class="scroll" style="max-height:none"><table class="bridge" id="puente"></table></div>
+
+  <div class="card" style="margin-top:20px"><h3>Política de devoluciones</h3>
+    <div class="kv">
+      <b>Importe neto</b><span>cantidad × precio × (1 − descuento). Las devoluciones <u>no</u> se restan.</span>
+      <b>Vínculo</b><span>Cada devolución se une a su venta original; su valor usa el precio neto de esa venta, así no se duplican importes.</span>
+      <b>Tasa</b><span>Por <b>unidades</b> (devueltas / vendidas), no por transacciones.</span>
+    </div></div>
+  <div class="card"><h3>Reproducibilidad y riesgo de «reemplazar valores»</h3>
+    <p>Power Query guarda cada paso como una línea M (<i>Applied Steps</i>): al llegar un archivo nuevo, se repite la misma receta. El riesgo de reemplazar valores a mano es que no queda regla ni rastro: un vacío cambiado por 0 baja las ventas, un descuento de 125 % cambiado por 15 % inventa una decisión, y un reemplazo literal no sirve en la siguiente entrega. Por eso las reglas se escriben como <b>condiciones</b>, no como valores.</p></div>
+</div></section>
+
+<section id="modelo"><div class="wrap">
+  <h2>Parte B · Modelo relacional</h2>
+  <svg class="er" viewBox="0 0 860 440" role="img" aria-label="Diagrama entidad relación: clientes y productos uno a muchos con ventas; ventas uno a cero o muchos con devoluciones; metas relacionada por región" style="width:100%;height:auto;max-width:860px">
+    <g transform="translate(40,20)"><rect class="b" width="210" height="116" rx="8"/><rect class="hd" width="210" height="30" rx="8"/><text x="105" y="20" text-anchor="middle" font-weight="700" font-size="14">clientes</text>
+      <text x="12" y="52" font-size="12"><tspan font-weight="700">PK</tspan> id_cliente</text><text x="12" y="72" font-size="12">nombre</text><text x="12" y="92" font-size="12">region</text><text x="12" y="110" font-size="12">segmento</text></g>
+    <g transform="translate(610,20)"><rect class="b" width="210" height="116" rx="8"/><rect class="hd" width="210" height="30" rx="8"/><text x="105" y="20" text-anchor="middle" font-weight="700" font-size="14">productos</text>
+      <text x="12" y="52" font-size="12"><tspan font-weight="700">PK</tspan> id_producto</text><text x="12" y="72" font-size="12">nombre_producto</text><text x="12" y="92" font-size="12">categoria</text><text x="12" y="110" font-size="12">precio_lista</text></g>
+    <g transform="translate(325,170)"><rect class="b" width="210" height="136" rx="8"/><rect class="hd" width="210" height="30" rx="8" style="fill:var(--tint-red)"/><text x="105" y="20" text-anchor="middle" font-weight="700" font-size="14">ventas (hecho)</text>
+      <text x="12" y="52" font-size="12"><tspan font-weight="700">PK</tspan> id_venta</text><text x="12" y="72" font-size="12"><tspan font-weight="700">FK</tspan> id_cliente, id_producto</text><text x="12" y="92" font-size="12">fecha, canal, cantidad</text><text x="12" y="112" font-size="12">precio_unitario, descuento</text></g>
+    <g transform="translate(325,350)"><rect class="b" width="210" height="80" rx="8"/><rect class="hd" width="210" height="28" rx="8"/><text x="105" y="19" text-anchor="middle" font-weight="700" font-size="14">devoluciones</text>
+      <text x="12" y="48" font-size="12"><tspan font-weight="700">PK</tspan> id_devolucion · <tspan font-weight="700">FK</tspan> id_venta</text><text x="12" y="68" font-size="12">cantidad_devuelta, motivo</text></g>
+    <g transform="translate(40,260)"><rect class="b" width="210" height="76" rx="8"/><rect class="hd2" width="210" height="28" rx="8"/><text x="105" y="19" text-anchor="middle" font-weight="700" font-size="14">metas</text>
+      <text x="12" y="48" font-size="12"><tspan font-weight="700">PK</tspan> (periodo, region)</text><text x="12" y="66" font-size="12">meta_ventas</text></g>
+    <polyline points="145,136 145,238 325,238" fill="none" stroke="var(--ink2)" stroke-width="1.6"/><text class="card-t" x="150" y="152">1</text><text class="card-t" x="302" y="232">N</text>
+    <polyline points="715,136 715,238 535,238" fill="none" stroke="var(--ink2)" stroke-width="1.6"/><text class="card-t" x="700" y="152">1</text><text class="card-t" x="540" y="232">N</text>
+    <line x1="430" y1="306" x2="430" y2="350"/><text class="card-t" x="436" y="322">1</text><text class="card-t" x="436" y="344">0..N</text>
+    <line class="dash" x1="145" y1="136" x2="145" y2="260" style="stroke-dasharray:5 4" /><text x="52" y="198" font-size="11" font-style="italic">lógica, por región (sin FK)</text>
+  </svg>
+
+  <div class="grid2">
+    <div class="card"><h3>Granularidad</h3>
+      <p><b>ventas</b>: una fila por transacción (el grano más fino, sirve para agregar a cualquier nivel). <b>metas</b>: una fila por mes y región. Si unes metas a cada venta, la meta se repite en cada transacción de su mes y región. Pruébalo:</p>
+      <div class="toggle" role="group" aria-label="Forma de unir">
+        <div class="btns"><button type="button" id="b-directo" aria-pressed="true">Unir directo a cada venta</button><button type="button" id="b-agregado" aria-pressed="false">Agregar antes de unir</button></div>
+      </div>
+      <div class="big" id="fan">$ 68 377 millones</div>
+      <p id="fan-txt" style="font:.9rem system-ui; color:var(--ink2)"></p></div>
+    <div class="card"><h3>Operacional frente a estrella</h3>
+      <table><tr><th></th><th>Operacional</th><th>Estrella</th></tr>
+      <tr><td>Fin</td><td>Capturar sin redundancia</td><td>Analizar con pocas uniones</td></tr>
+      <tr><td>Tablas</td><td>5 en 3FN</td><td>3 hechos + 4 dimensiones</td></tr>
+      <tr><td>Riesgo</td><td>Fan-out por olvidar el grano</td><td>Dimensiones mal conformadas</td></tr></table>
+      <p style="font:.88rem system-ui; color:var(--ink2); margin-top:10px">La estrella está implementada en la base (<code>sql/10_estrella.sql</code>) y suma exactamente lo mismo que las ventas (diferencia 0).</p></div>
+  </div>
+</div></section>
+
+<section id="sql"><div class="wrap">
+  <h2>Parte C · Consultas SQL</h2>
+  <p>Cada pestaña muestra la consulta tal como está en <code>sql/20_consultas.sql</code> y el resultado real que devuelve la base.</p>
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div id="q"></div>
+  <div class="grid2" style="margin-top:20px">
+    <div class="card blue"><h3>LEFT JOIN frente a INNER JOIN</h3>
+      <p>Sobre los datos crudos hay 1 201 ventas. Con <code>INNER JOIN</code> a clientes y productos quedan 1 199: dos ventas huérfanas desaparecen sin aviso. Con <code>LEFT JOIN … WHERE clave IS NULL</code> aparecen: V00054 (cliente C9999) y V00073 (producto P999).</p></div>
+    <div class="card blue"><h3>WHERE, HAVING, COUNT</h3>
+      <p><code>WHERE</code> filtra filas antes de agrupar; <code>HAVING</code>, grupos ya agregados. <code>COUNT(*)</code> da 1 201 y <code>COUNT(DISTINCT id_venta)</code> da 1 200: la diferencia es el duplicado V00240.</p></div>
+  </div>
+  <details class="card"><summary><b>Ver las consultas de calidad completas</b></summary><pre id="csql"></pre></details>
+  <p style="font:.9rem system-ui; color:var(--ink2)">Verificación cruzada: las consultas Q1 y Q5 se compararon fila a fila con <code>consultas_referencia.sql</code> que acompaña la guía, y dieron salida idéntica; Q2 y Q4 dan los mismos valores.</p>
+</div></section>
+
+<section id="resultados"><div class="wrap">
+  <h2>Parte D · Resultados y recomendación</h2>
+  <h3>Cumplimiento de metas por mes y región</h3>
+  <p>Pasa el cursor (o enfoca con el teclado) sobre una celda. Ninguna alcanza el 100 %.</p>
+  <div class="heat" id="heat"></div>
+
+  <div class="grid2">
+    <div class="card"><h3>Ventas netas frente a meta</h3><div id="ventasmeta"></div></div>
+    <div class="card"><h3>Tasa de devolución por categoría</h3><div id="devcat"></div><p style="font:.85rem system-ui;color:var(--ink2)">Total: <b id="devtot"></b> de las unidades.</p></div>
+  </div>
+  <div class="card"><h3>Participación por canal</h3><div id="canal"></div></div>
+
+  <div class="grid2">
+    <div class="card red"><h3>Recomendación</h3>
+      <ol style="margin:0; padding-left:1.2em">
+        <li><b>Validar cómo se definió la meta</b> antes de juzgar a las regiones. Un cumplimiento tan parejo (38,9 % a 41,8 %) sugiere una meta mal escalada, no un problema regional.</li>
+        <li><b>Investigar Tecnología</b> (6,10 % de devoluciones) cruzando motivo y proveedor.</li>
+        <li><b>Mantener los tres canales</b>: pesan lo mismo y el canal no discrimina.</li>
+      </ol></div>
+    <div class="card"><h3>Limitaciones</h3>
+      <ul style="margin:0; padding-left:1.2em">
+        <li>Datos sintéticos y solo seis meses.</li>
+        <li>Sin costos: es ingreso, no margen.</li>
+        <li>7 registros rechazados y 2 precios imputados; confirmar con el dueño del dato.</li>
+        <li>Devoluciones sin fecha.</li>
+        <li>Guiones M no ejecutados en Power BI.</li>
+      </ul></div>
+  </div>
+</div></section>
+
+<section id="reproducir"><div class="wrap">
+  <h2>Reproducir y entregables</h2>
+<pre>python3 pipeline/limpieza.py                                         # limpia y crea salida/novaretail.db
+uv run --no-project --with matplotlib python pipeline/graficos.py   # figuras + resultados.json
+python3 pipeline/portal.py                                           # regenera este portal
+make informe presentacion                                            # PDF con la plantilla UD (tectonic)</pre>
+  <div class="grid2">
+    <div class="card"><h3>Documentos</h3>
+      <ul style="margin:0; padding-left:1.2em">
+        <li><a href="../informe/informe.pdf">Informe (PDF)</a></li>
+        <li><a href="../presentacion/presentacion.pdf">Presentación (PDF)</a></li>
+        <li><a href="../guia-powerbi/guia_powerbi.pdf">Guía para completar Power BI desde un Mac (PDF)</a></li>
+      </ul></div>
+    <div class="card"><h3>Datos y código</h3>
+      <ul style="margin:0; padding-left:1.2em">
+        <li><a href="../salida/bitacora_calidad.csv">Bitácora de calidad (CSV)</a></li>
+        <li><a href="../salida/auditoria_rechazados.csv">Registros rechazados (CSV)</a></li>
+        <li><a href="../salida/datos_limpios/ventas.csv">Ventas depuradas (CSV)</a></li>
+        <li><a href="../sql/20_consultas.sql">Consultas SQL</a> · <a href="../power_query/README.md">Power Query (M)</a></li>
+      </ul></div>
+  </div>
+  <footer>Juan Felipe Rodríguez Galindo · 20261595004 · Maestría en Ciencias de la Información y las Comunicaciones · Universidad Distrital Francisco José de Caldas · Docente: Nancy Yaneth Gelvez Garcia</footer>
+</div></section>
+<div id="tip" role="status"></div>
+
+<script>
+const D = {"res": {"ventas_netas": 700001140.0, "meta_total": 1715000000, "unidades": 4196, "unidades_devueltas": 174, "tasa_devolucion_pct": 4.146806482364156, "cumplimiento": [{"periodo": "2026-01", "region": "Bogotá", "meta": 57000000, "ventas": 14193105.0}, {"periodo": "2026-01", "region": "Medellín", "meta": 60000000, "ventas": 20882460.0}, {"periodo": "2026-01", "region": "Cali", "meta": 55000000, "ventas": 27336820.0}, {"periodo": "2026-01", "region": "Barranquilla", "meta": 60000000, "ventas": 22087920.0}, {"periodo": "2026-01", "region": "Bucaramanga", "meta": 55000000, "ventas": 29051235.0}, {"periodo": "2026-02", "region": "Bogotá", "meta": 54000000, "ventas": 22998355.0}, {"periodo": "2026-02", "region": "Medellín", "meta": 56000000, "ventas": 16648330.0}, {"periodo": "2026-02", "region": "Cali", "meta": 62000000, "ventas": 23516505.0}, {"periodo": "2026-02", "region": "Barranquilla", "meta": 55000000, "ventas": 24334905.0}, {"periodo": "2026-02", "region": "Bucaramanga", "meta": 55000000, "ventas": 22755870.0}, {"periodo": "2026-03", "region": "Bogotá", "meta": 51000000, "ventas": 29383990.0}, {"periodo": "2026-03", "region": "Medellín", "meta": 52000000, "ventas": 24035310.0}, {"periodo": "2026-03", "region": "Cali", "meta": 59000000, "ventas": 30594655.0}, {"periodo": "2026-03", "region": "Barranquilla", "meta": 63000000, "ventas": 19746315.0}, {"periodo": "2026-03", "region": "Bucaramanga", "meta": 59000000, "ventas": 22182565.0}, {"periodo": "2026-04", "region": "Bogotá", "meta": 51000000, "ventas": 26269840.0}, {"periodo": "2026-04", "region": "Medellín", "meta": 59000000, "ventas": 31450425.0}, {"periodo": "2026-04", "region": "Cali", "meta": 58000000, "ventas": 21794970.0}, {"periodo": "2026-04", "region": "Barranquilla", "meta": 61000000, "ventas": 22359980.0}, {"periodo": "2026-04", "region": "Bucaramanga", "meta": 63000000, "ventas": 23642415.0}, {"periodo": "2026-05", "region": "Bogotá", "meta": 52000000, "ventas": 20738165.0}, {"periodo": "2026-05", "region": "Medellín", "meta": 57000000, "ventas": 16353975.0}, {"periodo": "2026-05", "region": "Cali", "meta": 60000000, "ventas": 20453310.0}, {"periodo": "2026-05", "region": "Barranquilla", "meta": 59000000, "ventas": 27937465.0}, {"periodo": "2026-05", "region": "Bucaramanga", "meta": 54000000, "ventas": 18076895.0}, {"periodo": "2026-06", "region": "Bogotá", "meta": 52000000, "ventas": 17641645.0}, {"periodo": "2026-06", "region": "Medellín", "meta": 56000000, "ventas": 28206935.0}, {"periodo": "2026-06", "region": "Cali", "meta": 61000000, "ventas": 24249890.0}, {"periodo": "2026-06", "region": "Barranquilla", "meta": 63000000, "ventas": 23994885.0}, {"periodo": "2026-06", "region": "Bucaramanga", "meta": 56000000, "ventas": 27082005.0}], "canal": [{"canal": "Web", "ventas": 234393545.0, "pct": 33.48473761057018}, {"canal": "Marketplace", "ventas": 234334075.0, "pct": 33.476241910120315}, {"canal": "Tienda", "ventas": 231273520.0, "pct": 33.03902047930951}], "devolucion_categoria": [{"categoria": "Tecnología", "tasa": 6.1010486177311725}, {"categoria": "Accesorios", "tasa": 4.376163873370578}, {"categoria": "Oficina", "tasa": 3.3175355450236967}, {"categoria": "Hogar", "tasa": 2.75049115913556}], "top5": [{"id": "P037", "nombre": "Producto 037", "categoria": "Hogar", "ingreso": 44757900.0}, {"id": "P035", "nombre": "Producto 035", "categoria": "Accesorios", "ingreso": 36587230.0}, {"id": "P039", "nombre": "Producto 039", "categoria": "Accesorios", "ingreso": 32827060.0}, {"id": "P040", "nombre": "Producto 040", "categoria": "Tecnología", "ingreso": 32793200.0}, {"id": "P038", "nombre": "Producto 038", "categoria": "Oficina", "ingreso": 32286230.0}], "region_total": [{"region": "Barranquilla", "ventas": 140461470.0, "meta": 361000000}, {"region": "Bogotá", "ventas": 131225100.0, "meta": 317000000}, {"region": "Bucaramanga", "ventas": 142790985.0, "meta": 342000000}, {"region": "Cali", "ventas": 147946150.0, "meta": 355000000}, {"region": "Medellín", "ventas": 137577435.0, "meta": 340000000}]}, "bitacora": [{"n": "1", "id_registro": "V00016", "regla": "R2 Formato de fecha ISO", "campo": "fecha", "valor_observado": "15/02/2026", "evidencia": "Día 15 > 12: solo puede ser dd/mm/aaaa; el resto del archivo está en aaaa-mm-dd", "impacto": "Con configuración regional en-US se leería mal o como error", "decision": "Convertir a 2026-02-15 (conversión determinista, no es un reemplazo)", "accion": "corregido"}, {"n": "2", "id_registro": "V00039", "regla": "R2 Fecha obligatoria", "campo": "fecha", "valor_observado": "(vacío)", "evidencia": "Sin fecha no se puede asignar mes ni comparar con metas", "impacto": "Ingreso fuera de todos los periodos", "decision": "Rechazar; no se inventa una fecha", "accion": "auditoría"}, {"n": "3", "id_registro": "V00054", "regla": "R3 Integridad referencial (cliente)", "campo": "id_cliente", "valor_observado": "C9999", "evidencia": "LEFT JOIN con clientes devuelve NULL; la clave no existe en el maestro", "impacto": "Un INNER JOIN la descartaría sin dejar rastro; sin región no entra a metas", "decision": "Rechazar y auditar; pedir alta o corrección al dueño del dato", "accion": "auditoría"}, {"n": "4", "id_registro": "V00073", "regla": "R3 Integridad referencial (producto)", "campo": "id_producto", "valor_observado": "P999", "evidencia": "LEFT JOIN con productos devuelve NULL; la clave no existe en el catálogo", "impacto": "Un INNER JOIN la descartaría sin dejar rastro", "decision": "Rechazar y auditar", "accion": "auditoría"}, {"n": "5", "id_registro": "V00093", "regla": "R4 Cantidad entera positiva", "campo": "cantidad", "valor_observado": "-2", "evidencia": "Nulo o <= 0; ningún otro campo permite inferir las unidades vendidas", "impacto": "Importe y unidades erróneos (una cantidad negativa resta ingreso)", "decision": "Rechazar y auditar; un negativo podría ser una devolución mal registrada, lo confirma el negocio", "accion": "auditoría"}, {"n": "6", "id_registro": "V00116", "regla": "R4 Cantidad entera positiva", "campo": "cantidad", "valor_observado": "(vacío)", "evidencia": "Nulo o <= 0; ningún otro campo permite inferir las unidades vendidas", "impacto": "Importe y unidades erróneos (una cantidad negativa resta ingreso)", "decision": "Rechazar y auditar; un negativo podría ser una devolución mal registrada, lo confirma el negocio", "accion": "auditoría"}, {"n": "7", "id_registro": "V00141", "regla": "R6 Precio positivo = precio de lista", "campo": "precio_unitario", "valor_observado": "(vacío)", "evidencia": "1198/1198 ventas válidas se facturan exactamente al precio_lista del catálogo", "impacto": "Sin corregir, el importe sería nulo o negativo", "decision": "Imputar precio_lista = 179400 y marcar la fila (columna ajustes)", "accion": "corregido"}, {"n": "8", "id_registro": "V00167", "regla": "R5 Descuento en escala comercial", "campo": "descuento", "valor_observado": "1.25", "evidencia": "Valores válidos: 0, 0,05, 0,10, 0,15. Un 125 % produce importe neto negativo", "impacto": "Ingreso neto negativo; el descuento correcto es desconocido", "decision": "Rechazar; recortar a 1 o a 0 sería arbitrario", "accion": "auditoría"}, {"n": "9", "id_registro": "V00186", "regla": "R7 Dominio de canal", "campo": "canal", "valor_observado": "'web'", "evidencia": "Espacios finales o mayúsculas distintas de las 3 categorías válidas", "impacto": "Aparecería como un 4.º y 5.º canal y partiría la participación", "decision": "Normalizar a Web (trim + proper case)", "accion": "corregido"}, {"n": "10", "id_registro": "V00213", "regla": "R7 Dominio de canal", "campo": "canal", "valor_observado": "'WEB'", "evidencia": "Espacios finales o mayúsculas distintas de las 3 categorías válidas", "impacto": "Aparecería como un 4.º y 5.º canal y partiría la participación", "decision": "Normalizar a Web (trim + proper case)", "accion": "corregido"}, {"n": "11", "id_registro": "V00410", "regla": "R6 Precio positivo = precio de lista", "campo": "precio_unitario", "valor_observado": "-20000", "evidencia": "1198/1198 ventas válidas se facturan exactamente al precio_lista del catálogo", "impacto": "Sin corregir, el importe sería nulo o negativo", "decision": "Imputar precio_lista = 289600 y marcar la fila (columna ajustes)", "accion": "corregido"}, {"n": "12", "id_registro": "V00240", "regla": "R1 Unicidad de id_venta", "campo": "id_venta", "valor_observado": "V00240", "evidencia": "Segunda aparición con las 8 columnas idénticas a la primera", "impacto": "Duplicaría ingreso y unidades si se conservara", "decision": "Rechazar la repetición, conservar la primera", "accion": "auditoría"}], "consultas": [{"titulo": "Q1 · Ventas netas por región y mes", "sql": "-- Q1 · Ventas netas por región y mes ---------------------------------\n-- JOIN a clientes aporta la región. Granularidad del resultado: mes x región (igual que metas).\nSELECT substr(v.fecha,1,7)                      AS periodo,\n       c.region,\n       COUNT(*)                                 AS transacciones,\n       SUM(v.cantidad)                          AS unidades,\n       ROUND(SUM(v.importe_neto),0)             AS ventas_netas\nFROM ventas v\nJOIN clientes c ON c.id_cliente = v.id_cliente\nGROUP BY periodo, c.region\nORDER BY periodo, c.region;", "cols": ["periodo", "region", "transacciones", "unidades", "ventas_netas"], "filas": [["2026-01", "Barranquilla", 44, 155, 22087920.0], ["2026-01", "Bogotá", 26, 79, 14193105.0], ["2026-01", "Bucaramanga", 44, 162, 29051235.0], ["2026-01", "Cali", 45, 173, 27336820.0], ["2026-01", "Medellín", 41, 130, 20882460.0], ["2026-02", "Barranquilla", 36, 129, 24334905.0], ["2026-02", "Bogotá", 38, 137, 22998355.0], ["2026-02", "Bucaramanga", 41, 163, 22755870.0], ["2026-02", "Cali", 41, 132, 23516505.0], ["2026-02", "Medellín", 28, 90, 16648330.0], ["2026-03", "Barranquilla", 41, 128, 19746315.0], ["2026-03", "Bogotá", 44, 166, 29383990.0], ["2026-03", "Bucaramanga", 45, 151, 22182565.0], ["2026-03", "Cali", 45, 178, 30594655.0], ["2026-03", "Medellín", 35, 124, 24035310.0], ["2026-04", "Barranquilla", 38, 144, 22359980.0], ["2026-04", "Bogotá", 41, 151, 26269840.0], ["2026-04", "Bucaramanga", 43, 152, 23642415.0], ["2026-04", "Cali", 34, 115, 21794970.0], ["2026-04", "Medellín", 48, 181, 31450425.0], ["2026-05", "Barranquilla", 55, 173, 27937465.0], ["2026-05", "Bogotá", 42, 130, 20738165.0], ["2026-05", "Bucaramanga", 30, 123, 18076895.0], ["2026-05", "Cali", 36, 119, 20453310.0], ["2026-05", "Medellín", 32, 106, 16353975.0], ["2026-06", "Barranquilla", 45, 148, 23994885.0], ["2026-06", "Bogotá", 35, 108, 17641645.0], ["2026-06", "Bucaramanga", 42, 153, 27082005.0], ["2026-06", "Cali", 32, 140, 24249890.0], ["2026-06", "Medellín", 47, 156, 28206935.0]]}, {"titulo": "Q2 · Cinco productos con mayores ingresos", "sql": "-- Q2 · Cinco productos con mayores ingresos --------------------------\n-- Se agrupa por la clave (id_producto), no por el nombre; el nombre solo se muestra.\nSELECT p.id_producto, p.nombre_producto, p.categoria,\n       SUM(v.cantidad)                  AS unidades,\n       ROUND(SUM(v.importe_neto),0)     AS ingresos_netos\nFROM ventas v\nJOIN productos p ON p.id_producto = v.id_producto\nGROUP BY p.id_producto\nORDER BY ingresos_netos DESC\nLIMIT 5;", "cols": ["id_producto", "nombre_producto", "categoria", "unidades", "ingresos_netos"], "filas": [["P037", "Producto 037", "Hogar", 160, 44757900.0], ["P035", "Producto 035", "Accesorios", 136, 36587230.0], ["P039", "Producto 039", "Accesorios", 110, 32827060.0], ["P040", "Producto 040", "Tecnología", 109, 32793200.0], ["P038", "Producto 038", "Oficina", 113, 32286230.0]]}, {"titulo": "Q3 · Participación por canal", "sql": "-- Q3 · Participación por canal ---------------------------------------\n-- Ventana SUM() OVER () evita una subconsulta para el total.\nSELECT canal,\n       ROUND(SUM(importe_neto),0)                                         AS ventas_netas,\n       ROUND(100.0 * SUM(importe_neto) / SUM(SUM(importe_neto)) OVER (),2) AS participacion_pct\nFROM ventas\nGROUP BY canal\nORDER BY ventas_netas DESC;", "cols": ["canal", "ventas_netas", "participacion_pct"], "filas": [["Web", 234393545.0, 33.48], ["Marketplace", 234334075.0, 33.48], ["Tienda", 231273520.0, 33.04]]}, {"titulo": "Q4 · Tasa de devoluciones POR UNIDADES", "sql": "-- Q4 · Tasa de devoluciones POR UNIDADES -----------------------------\n-- Dos agregaciones independientes y luego se dividen: unir devoluciones a ventas y sumar\n-- cantidad repetiría las unidades vendidas de cada venta con más de una devolución.\nSELECT u.unidades_vendidas,\n       d.unidades_devueltas,\n       ROUND(100.0 * d.unidades_devueltas / u.unidades_vendidas, 2) AS tasa_devolucion_unidades_pct,\n       d.valor_devuelto,\n       ROUND(100.0 * d.valor_devuelto / u.ventas_netas, 2)          AS tasa_devolucion_valor_pct\nFROM (SELECT SUM(cantidad) AS unidades_vendidas, SUM(importe_neto) AS ventas_netas FROM ventas) u,\n     (SELECT SUM(dv.cantidad_devuelta) AS unidades_devueltas,\n             ROUND(SUM(dv.cantidad_devuelta * v.precio_unitario * (1 - v.descuento)),0) AS valor_devuelto\n      FROM devoluciones dv JOIN ventas v ON v.id_venta = dv.id_venta) d;", "cols": ["unidades_vendidas", "unidades_devueltas", "tasa_devolucion_unidades_pct", "valor_devuelto", "tasa_devolucion_valor_pct"], "filas": [[4196, 174, 4.15, 29963315.0, 4.28]]}, {"titulo": "Q5 · Cumplimiento de metas por mes y región", "sql": "-- Q5 · Cumplimiento de metas por mes y región ------------------------\n-- Las ventas se AGREGAN a mes x región ANTES de unir con metas (misma granularidad).\n-- LEFT JOIN desde metas: un mes-región sin ventas aparece con 0 % en lugar de desaparecer.\nWITH ventas_mes_region AS (\n  SELECT substr(v.fecha,1,7) AS periodo, c.region, SUM(v.importe_neto) AS ventas_netas\n  FROM ventas v JOIN clientes c ON c.id_cliente = v.id_cliente\n  GROUP BY 1, 2\n)\nSELECT m.periodo, m.region, m.meta_ventas,\n       ROUND(COALESCE(x.ventas_netas,0),0)                                   AS ventas_netas,\n       ROUND(100.0 * COALESCE(x.ventas_netas,0) / NULLIF(m.meta_ventas,0),1) AS cumplimiento_pct,\n       CASE WHEN COALESCE(x.ventas_netas,0) >= m.meta_ventas THEN 'Cumple' ELSE 'No cumple' END AS estado\nFROM metas m\nLEFT JOIN ventas_mes_region x ON x.periodo = m.periodo AND x.region = m.region\nORDER BY m.periodo, m.region;", "cols": ["periodo", "region", "meta_ventas", "ventas_netas", "cumplimiento_pct", "estado"], "filas": [["2026-01", "Barranquilla", 60000000, 22087920.0, 36.8, "No cumple"], ["2026-01", "Bogotá", 57000000, 14193105.0, 24.9, "No cumple"], ["2026-01", "Bucaramanga", 55000000, 29051235.0, 52.8, "No cumple"], ["2026-01", "Cali", 55000000, 27336820.0, 49.7, "No cumple"], ["2026-01", "Medellín", 60000000, 20882460.0, 34.8, "No cumple"], ["2026-02", "Barranquilla", 55000000, 24334905.0, 44.2, "No cumple"], ["2026-02", "Bogotá", 54000000, 22998355.0, 42.6, "No cumple"], ["2026-02", "Bucaramanga", 55000000, 22755870.0, 41.4, "No cumple"], ["2026-02", "Cali", 62000000, 23516505.0, 37.9, "No cumple"], ["2026-02", "Medellín", 56000000, 16648330.0, 29.7, "No cumple"], ["2026-03", "Barranquilla", 63000000, 19746315.0, 31.3, "No cumple"], ["2026-03", "Bogotá", 51000000, 29383990.0, 57.6, "No cumple"], ["2026-03", "Bucaramanga", 59000000, 22182565.0, 37.6, "No cumple"], ["2026-03", "Cali", 59000000, 30594655.0, 51.9, "No cumple"], ["2026-03", "Medellín", 52000000, 24035310.0, 46.2, "No cumple"], ["2026-04", "Barranquilla", 61000000, 22359980.0, 36.7, "No cumple"], ["2026-04", "Bogotá", 51000000, 26269840.0, 51.5, "No cumple"], ["2026-04", "Bucaramanga", 63000000, 23642415.0, 37.5, "No cumple"], ["2026-04", "Cali", 58000000, 21794970.0, 37.6, "No cumple"], ["2026-04", "Medellín", 59000000, 31450425.0, 53.3, "No cumple"], ["2026-05", "Barranquilla", 59000000, 27937465.0, 47.4, "No cumple"], ["2026-05", "Bogotá", 52000000, 20738165.0, 39.9, "No cumple"], ["2026-05", "Bucaramanga", 54000000, 18076895.0, 33.5, "No cumple"], ["2026-05", "Cali", 60000000, 20453310.0, 34.1, "No cumple"], ["2026-05", "Medellín", 57000000, 16353975.0, 28.7, "No cumple"], ["2026-06", "Barranquilla", 63000000, 23994885.0, 38.1, "No cumple"], ["2026-06", "Bogotá", 52000000, 17641645.0, 33.9, "No cumple"], ["2026-06", "Bucaramanga", 56000000, 27082005.0, 48.4, "No cumple"], ["2026-06", "Cali", 61000000, 24249890.0, 39.8, "No cumple"], ["2026-06", "Medellín", 56000000, 28206935.0, 50.4, "No cumple"]]}], "calidad_sql": "-- =====================================================================\n-- Parte C · puntos 12 y 13: calidad de datos y conceptos\n-- =====================================================================\n\n-- C12a · LEFT JOIN revela referencias faltantes en los datos CRUDOS ------\n-- Cada fila devuelta es una venta cuya clave no existe en el maestro.\nSELECT v.id_venta, v.id_cliente, v.id_producto,\n       CASE WHEN c.id_cliente  IS NULL THEN 'cliente inexistente'  END AS falla_cliente,\n       CASE WHEN p.id_producto IS NULL THEN 'producto inexistente' END AS falla_producto\nFROM ventas_crudas v\nLEFT JOIN clientes  c ON c.id_cliente  = v.id_cliente\nLEFT JOIN productos p ON p.id_producto = v.id_producto\nWHERE c.id_cliente IS NULL OR p.id_producto IS NULL;\n\n-- C12b · El mismo cruce con INNER JOIN: las dos incidencias desaparecen sin aviso ----\nSELECT (SELECT COUNT(*) FROM ventas_crudas)                                   AS filas_crudas,\n       (SELECT COUNT(*) FROM ventas_crudas v\n          JOIN clientes c ON c.id_cliente = v.id_cliente\n          JOIN productos p ON p.id_producto = v.id_producto)                  AS filas_tras_inner_join;\n\n-- C13a · WHERE filtra FILAS antes de agrupar; HAVING filtra GRUPOS después -----\n-- Ventas de 2026-03 en adelante (WHERE) y, de ellas, solo regiones que superan 95 M (HAVING).\nSELECT c.region, ROUND(SUM(v.importe_neto),0) AS ventas_netas\nFROM ventas v JOIN clientes c ON c.id_cliente = v.id_cliente\nWHERE v.fecha >= '2026-03-01'\nGROUP BY c.region\nHAVING SUM(v.importe_neto) > 95000000\nORDER BY ventas_netas DESC;\n\n-- C13b · COUNT(*) cuenta filas; COUNT(DISTINCT id_venta) cuenta ventas únicas ----\n-- Sobre ventas_crudas la diferencia (1) es exactamente el duplicado V00240.\n-- Tras unir devoluciones, una venta con varias devoluciones aparecería varias veces en COUNT(*).\nSELECT COUNT(*)                    AS filas,\n       COUNT(DISTINCT id_venta)    AS ventas_unicas,\n       COUNT(*) - COUNT(DISTINCT id_venta) AS repetidas\nFROM ventas_crudas;\n\n-- C13c · Auditoría: qué se apartó y por qué ------------------------------------\nSELECT motivo_rechazo, COUNT(*) AS registros\nFROM auditoria_rechazados GROUP BY motivo_rechazo ORDER BY registros DESC;\n\n-- C13d · Reconciliación contra el esquema estrella (debe dar 0 de diferencia) ---\nSELECT ROUND((SELECT SUM(importe_neto) FROM ventas) - (SELECT SUM(importe_neto) FROM fact_ventas),2) AS dif_operacional_vs_estrella;\n", "auditoria": [{"id": "V00039", "motivo": "R2 fecha vacía"}, {"id": "V00054", "motivo": "R3 id_cliente inexistente"}, {"id": "V00073", "motivo": "R3 id_producto inexistente"}, {"id": "V00093", "motivo": "R4 cantidad inválida"}, {"id": "V00116", "motivo": "R4 cantidad inválida"}, {"id": "V00167", "motivo": "R5 descuento fuera de rango"}, {"id": "V00240", "motivo": "R1 venta repetida"}]};
+const R = D.res;
+const $ = (s, el=document) => el.querySelector(s);
+const nf = (x, d=0) => x.toLocaleString("es-CO", {minimumFractionDigits:d, maximumFractionDigits:d});
+const mm = x => nf(x/1e6, 1);
+
+// Tema
+const root = document.documentElement;
+try { const t = localStorage.getItem("tema"); if (t) root.dataset.theme = t; } catch(e){}
+$("#tema").onclick = () => {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("tema", root.dataset.theme); } catch(e){}
+};
+
+// Tiles
+const cumGlobal = 100 * R.ventas_netas / R.meta_total;
+$("#tiles").innerHTML = [
+  ["1 194 / 1 201", "ventas aceptadas (7 a auditoría)", ""],
+  ["$ " + mm(R.ventas_netas) + " M", "ventas netas depuradas", ""],
+  [nf(cumGlobal,1) + " %", "cumplimiento de metas · 0 de 30 cumplen", "warn"],
+  [nf(R.tasa_devolucion_pct,2) + " %", "unidades devueltas", ""],
+].map(([b, s, c]) => `<div class="tile ${c}"><b>${b}</b><span>${s}</span></div>`).join("");
+$("#cuadre").textContent = "1 194 + 7 = 1 201 ✓";
+
+// Bitácora
+const tb = $("#bitacora tbody");
+function pintaBit(f) {
+  tb.innerHTML = "";
+  D.bitacora.filter(b => f === "todas" || b.accion === f).forEach(b => {
+    const tr = document.createElement("tr"); tr.className = "bi"; tr.tabIndex = 0;
+    const pill = b.accion === "corregido" ? '<span class="pill c">Corregida</span>' : '<span class="pill a">Auditoría</span>';
+    tr.innerHTML = `<td>${b.n}</td><td>${b.id_registro}</td><td>${b.regla}</td><td><code>${b.valor_observado.replace(/</g,"&lt;")}</code></td><td>${pill}</td>`;
+    const det = document.createElement("tr"); det.className = "det"; det.hidden = true;
+    det.innerHTML = `<td colspan="5"><b>Evidencia:</b> ${b.evidencia}<br><b>Impacto:</b> ${b.impacto}<br><b>Decisión:</b> ${b.decision}</td>`;
+    const tog = () => det.hidden = !det.hidden;
+    tr.onclick = tog; tr.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); } };
+    tb.append(tr, det);
+  });
+}
+pintaBit("todas");
+document.querySelectorAll("#filtros button").forEach(btn => btn.onclick = () => {
+  document.querySelectorAll("#filtros button").forEach(x => x.setAttribute("aria-pressed", x === btn));
+  pintaBit(btn.dataset.f);
+});
+
+// Puente
+const puente = [
+  ["Suma ingenua del archivo (blancos = 0, sin validar)", 701679450, null],
+  ["Venta repetida V00240", -1015920], ["Cliente inexistente V00054", -1476960], ["Producto inexistente V00073", -547200],
+  ["Fecha vacía V00039", -168030], ["Cantidad negativa V00093 (restaba)", 326800], ["Descuento 125 % V00167 (restaba)", 225000],
+  ["Precio faltante V00141 (valía 0)", 358800], ["Precio negativo V00410 (restaba)", 619200],
+  ["Conjunto depurado", 700001140, null],
+];
+const mx = 1.6e6;
+$("#puente").innerHTML = puente.map(([t, v, d]) => {
+  const total = d === null;
+  const w = total ? 0 : Math.min(100, Math.abs(v) / mx * 100);
+  return `<tr><td${total ? ' style="font-weight:700"' : ""}>${t}</td><td class="n">${total ? nf(v) : (v > 0 ? "+" : "−") + nf(Math.abs(v))}</td>
+    <td style="width:34%">${total ? "" : `<div class="bar ${v < 0 ? "neg" : ""}" style="width:${w}%"></div>`}</td></tr>`;
+}).join("");
+
+// Fan-out
+function fan(directo) {
+  $("#b-directo").setAttribute("aria-pressed", directo); $("#b-agregado").setAttribute("aria-pressed", !directo);
+  $("#fan").textContent = directo ? "$ 68 377 millones" : "$ 1 715 millones";
+  $("#fan-txt").textContent = directo
+    ? "Suma de meta_ventas tras unir a cada una de las 1 194 ventas: la meta se cuenta ~40 veces (39,9×). Es un error de fan-out."
+    : "Suma correcta: las ventas se agregan a (mes, región) y recién entonces se unen, así que cada meta aparece una sola vez (30 filas).";
+}
+$("#b-directo").onclick = () => fan(true); $("#b-agregado").onclick = () => fan(false); fan(true);
+
+// SQL tabs
+const tabs = $("#tabs"), qbox = $("#q");
+const expl = [
+  "Se une ventas con clientes para obtener la región. El grano del resultado (mes × región) coincide con el de las metas.",
+  "Se agrupa por la clave id_producto, no por el nombre; el nombre solo se muestra.",
+  "La ventana SUM() OVER () evita una subconsulta para el total.",
+  "Dos agregaciones independientes que luego se dividen: unir devoluciones a ventas y sumar cantidad repetiría unidades si una venta tuviera varias devoluciones.",
+  "Las ventas se agregan a (mes, región) ANTES de unir, y el LEFT JOIN parte de metas: una combinación sin ventas aparece con 0 % en vez de desaparecer.",
+];
+function pintaQ(i) {
+  [...tabs.children].forEach((b, j) => b.setAttribute("aria-selected", i === j));
+  const c = D.consultas[i];
+  const num = v => typeof v === "number" ? nf(v, Number.isInteger(v) ? 0 : 2) : v;
+  qbox.innerHTML = `<h3>${c.titulo}</h3><p>${expl[i] || ""}</p><pre></pre>
+    <div class="scroll"><table><thead><tr>${c.cols.map((x, k) => `<th class="${typeof c.filas[0]?.[k] === "number" ? "n" : ""}">${x}</th>`).join("")}</tr></thead>
+    <tbody>${c.filas.map(r => `<tr>${r.map(v => `<td class="${typeof v === "number" ? "n" : ""}">${num(v)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+    <p style="font:.8rem system-ui;color:var(--muted)">${c.filas.length} filas</p>`;
+  $("pre", qbox).textContent = c.sql;
+}
+D.consultas.forEach((c, i) => {
+  const b = document.createElement("button"); b.type = "button"; b.role = "tab"; b.textContent = c.titulo.split("·")[0].trim();
+  b.title = c.titulo; b.onclick = () => pintaQ(i); tabs.append(b);
+});
+pintaQ(0);
+$("#csql").textContent = D.calidad_sql;
+
+// Mapa de calor
+const REG = ["Bogotá", "Medellín", "Cali", "Barranquilla", "Bucaramanga"], PER = ["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"], MES = ["Ene","Feb","Mar","Abr","May","Jun"];
+const cell = {}; R.cumplimiento.forEach(c => cell[c.periodo + "|" + c.region] = c);
+const heat = $("#heat"), tip = $("#tip");
+heat.insertAdjacentHTML("beforeend", '<div class="h"></div>' + MES.map(m => `<div class="h">${m}</div>`).join(""));
+REG.forEach(r => {
+  heat.insertAdjacentHTML("beforeend", `<div class="r">${r}</div>`);
+  PER.forEach(p => {
+    const c = cell[p + "|" + r], pct = 100 * c.ventas / c.meta;
+    const t = Math.min(1, pct / 100);
+    const el = document.createElement("div"); el.className = "c"; el.tabIndex = 0;
+    el.style.background = `color-mix(in srgb, #1291C0 ${Math.round(18 + 80 * t)}%, var(--surface))`;
+    el.style.color = pct > 45 ? "#fff" : "var(--ink)";
+    el.textContent = nf(pct, 0) + " %";
+    el.setAttribute("aria-label", `${r} ${p}: ${nf(pct,1)} % de la meta`);
+    const show = e => { tip.style.display = "block"; tip.innerHTML = `<b>${r} · ${p}</b><br>Ventas $ ${mm(c.ventas)} M<br>Meta $ ${mm(c.meta)} M<br>Cumplimiento ${nf(pct,1)} %`;
+      const b = el.getBoundingClientRect(); tip.style.left = Math.min(innerWidth - 250, b.left) + "px"; tip.style.top = (b.bottom + 6) + "px"; };
+    el.onmouseenter = show; el.onfocus = show; el.onmouseleave = el.onblur = () => tip.style.display = "none";
+    heat.append(el);
+  });
+});
+
+// Barras
+const barra = (rows, max, fmt, hl) => rows.map(([l, v]) => `<div class="hbar"><span>${l}</span><div class="t"><div class="f ${l === hl ? "hl" : ""}" style="width:${v / max * 100}%"></div></div><b>${fmt(v)}</b></div>`).join("");
+const vm = PER.map((p, i) => [MES[i], R.cumplimiento.filter(c => c.periodo === p).reduce((s, c) => s + c.ventas, 0), R.cumplimiento.filter(c => c.periodo === p).reduce((s, c) => s + c.meta, 0)]);
+$("#ventasmeta").innerHTML = vm.map(([m, v, g]) => `<div class="hbar" title="Meta $ ${mm(g)} M"><span>${m}</span><div class="t" style="position:relative"><div class="f" style="width:${v / g * 100}%"></div></div><b>${nf(100 * v / g, 0)} %</b></div>`).join("")
+  + `<p style="font:.8rem system-ui;color:var(--muted)">La barra completa es la meta mensual (≈ $ 286 M); lo relleno son las ventas netas.</p>`;
+$("#devcat").innerHTML = barra(R.devolucion_categoria.map(d => [d.categoria, d.tasa]), 7, v => nf(v, 2) + " %", "Tecnología");
+$("#devtot").textContent = nf(R.tasa_devolucion_pct, 2) + " %";
+$("#canal").innerHTML = barra(R.canal.map(c => [c.canal, c.pct]), 50, v => nf(v, 1) + " %");
+</script>
+</body>
+</html>

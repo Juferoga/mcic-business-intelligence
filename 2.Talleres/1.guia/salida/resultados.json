@@ -1,0 +1,283 @@
+{
+ "ventas_netas": 700001140.0,
+ "meta_total": 1715000000,
+ "unidades": 4196,
+ "unidades_devueltas": 174,
+ "tasa_devolucion_pct": 4.146806482364156,
+ "cumplimiento": [
+  {
+   "periodo": "2026-01",
+   "region": "Bogotá",
+   "meta": 57000000,
+   "ventas": 14193105.0
+  },
+  {
+   "periodo": "2026-01",
+   "region": "Medellín",
+   "meta": 60000000,
+   "ventas": 20882460.0
+  },
+  {
+   "periodo": "2026-01",
+   "region": "Cali",
+   "meta": 55000000,
+   "ventas": 27336820.0
+  },
+  {
+   "periodo": "2026-01",
+   "region": "Barranquilla",
+   "meta": 60000000,
+   "ventas": 22087920.0
+  },
+  {
+   "periodo": "2026-01",
+   "region": "Bucaramanga",
+   "meta": 55000000,
+   "ventas": 29051235.0
+  },
+  {
+   "periodo": "2026-02",
+   "region": "Bogotá",
+   "meta": 54000000,
+   "ventas": 22998355.0
+  },
+  {
+   "periodo": "2026-02",
+   "region": "Medellín",
+   "meta": 56000000,
+   "ventas": 16648330.0
+  },
+  {
+   "periodo": "2026-02",
+   "region": "Cali",
+   "meta": 62000000,
+   "ventas": 23516505.0
+  },
+  {
+   "periodo": "2026-02",
+   "region": "Barranquilla",
+   "meta": 55000000,
+   "ventas": 24334905.0
+  },
+  {
+   "periodo": "2026-02",
+   "region": "Bucaramanga",
+   "meta": 55000000,
+   "ventas": 22755870.0
+  },
+  {
+   "periodo": "2026-03",
+   "region": "Bogotá",
+   "meta": 51000000,
+   "ventas": 29383990.0
+  },
+  {
+   "periodo": "2026-03",
+   "region": "Medellín",
+   "meta": 52000000,
+   "ventas": 24035310.0
+  },
+  {
+   "periodo": "2026-03",
+   "region": "Cali",
+   "meta": 59000000,
+   "ventas": 30594655.0
+  },
+  {
+   "periodo": "2026-03",
+   "region": "Barranquilla",
+   "meta": 63000000,
+   "ventas": 19746315.0
+  },
+  {
+   "periodo": "2026-03",
+   "region": "Bucaramanga",
+   "meta": 59000000,
+   "ventas": 22182565.0
+  },
+  {
+   "periodo": "2026-04",
+   "region": "Bogotá",
+   "meta": 51000000,
+   "ventas": 26269840.0
+  },
+  {
+   "periodo": "2026-04",
+   "region": "Medellín",
+   "meta": 59000000,
+   "ventas": 31450425.0
+  },
+  {
+   "periodo": "2026-04",
+   "region": "Cali",
+   "meta": 58000000,
+   "ventas": 21794970.0
+  },
+  {
+   "periodo": "2026-04",
+   "region": "Barranquilla",
+   "meta": 61000000,
+   "ventas": 22359980.0
+  },
+  {
+   "periodo": "2026-04",
+   "region": "Bucaramanga",
+   "meta": 63000000,
+   "ventas": 23642415.0
+  },
+  {
+   "periodo": "2026-05",
+   "region": "Bogotá",
+   "meta": 52000000,
+   "ventas": 20738165.0
+  },
+  {
+   "periodo": "2026-05",
+   "region": "Medellín",
+   "meta": 57000000,
+   "ventas": 16353975.0
+  },
+  {
+   "periodo": "2026-05",
+   "region": "Cali",
+   "meta": 60000000,
+   "ventas": 20453310.0
+  },
+  {
+   "periodo": "2026-05",
+   "region": "Barranquilla",
+   "meta": 59000000,
+   "ventas": 27937465.0
+  },
+  {
+   "periodo": "2026-05",
+   "region": "Bucaramanga",
+   "meta": 54000000,
+   "ventas": 18076895.0
+  },
+  {
+   "periodo": "2026-06",
+   "region": "Bogotá",
+   "meta": 52000000,
+   "ventas": 17641645.0
+  },
+  {
+   "periodo": "2026-06",
+   "region": "Medellín",
+   "meta": 56000000,
+   "ventas": 28206935.0
+  },
+  {
+   "periodo": "2026-06",
+   "region": "Cali",
+   "meta": 61000000,
+   "ventas": 24249890.0
+  },
+  {
+   "periodo": "2026-06",
+   "region": "Barranquilla",
+   "meta": 63000000,
+   "ventas": 23994885.0
+  },
+  {
+   "periodo": "2026-06",
+   "region": "Bucaramanga",
+   "meta": 56000000,
+   "ventas": 27082005.0
+  }
+ ],
+ "canal": [
+  {
+   "canal": "Web",
+   "ventas": 234393545.0,
+   "pct": 33.48473761057018
+  },
+  {
+   "canal": "Marketplace",
+   "ventas": 234334075.0,
+   "pct": 33.476241910120315
+  },
+  {
+   "canal": "Tienda",
+   "ventas": 231273520.0,
+   "pct": 33.03902047930951
+  }
+ ],
+ "devolucion_categoria": [
+  {
+   "categoria": "Tecnología",
+   "tasa": 6.1010486177311725
+  },
+  {
+   "categoria": "Accesorios",
+   "tasa": 4.376163873370578
+  },
+  {
+   "categoria": "Oficina",
+   "tasa": 3.3175355450236967
+  },
+  {
+   "categoria": "Hogar",
+   "tasa": 2.75049115913556
+  }
+ ],
+ "top5": [
+  {
+   "id": "P037",
+   "nombre": "Producto 037",
+   "categoria": "Hogar",
+   "ingreso": 44757900.0
+  },
+  {
+   "id": "P035",
+   "nombre": "Producto 035",
+   "categoria": "Accesorios",
+   "ingreso": 36587230.0
+  },
+  {
+   "id": "P039",
+   "nombre": "Producto 039",
+   "categoria": "Accesorios",
+   "ingreso": 32827060.0
+  },
+  {
+   "id": "P040",
+   "nombre": "Producto 040",
+   "categoria": "Tecnología",
+   "ingreso": 32793200.0
+  },
+  {
+   "id": "P038",
+   "nombre": "Producto 038",
+   "categoria": "Oficina",
+   "ingreso": 32286230.0
+  }
+ ],
+ "region_total": [
+  {
+   "region": "Barranquilla",
+   "ventas": 140461470.0,
+   "meta": 361000000
+  },
+  {
+   "region": "Bogotá",
+   "ventas": 131225100.0,
+   "meta": 317000000
+  },
+  {
+   "region": "Bucaramanga",
+   "ventas": 142790985.0,
+   "meta": 342000000
+  },
+  {
+   "region": "Cali",
+   "ventas": 147946150.0,
+   "meta": 355000000
+  },
+  {
+   "region": "Medellín",
+   "ventas": 137577435.0,
+   "meta": 340000000
+  }
+ ]
+}

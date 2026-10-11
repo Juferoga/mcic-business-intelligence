@@ -1,0 +1,13 @@
+{
+  "name": "Universidad Distrital",
+  "dataColors": ["#1291C0", "#ED3237", "#B49739", "#00A859", "#98999A", "#373435", "#A61C22", "#0B6D92"],
+  "background": "#FFFFFF",
+  "foreground": "#373435",
+  "tableAccent": "#ED3237",
+  "textClasses": {
+    "title":   { "fontFace": "Cambria", "fontSize": 14, "color": "#373435" },
+    "header":  { "fontFace": "Cambria", "fontSize": 12, "color": "#373435" },
+    "label":   { "fontFace": "Times New Roman", "fontSize": 10, "color": "#373435" },
+    "callout": { "fontFace": "Cambria", "fontSize": 28, "color": "#1291C0" }
+  }
+}

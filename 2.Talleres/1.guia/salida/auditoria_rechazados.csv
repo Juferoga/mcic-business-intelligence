@@ -1,0 +1,8 @@
+id_venta,fecha,id_cliente,id_producto,canal,cantidad,precio_unitario,descuento,motivo_rechazo
+V00039,,C0009,P022,Marketplace,1,186700,0.1,R2 fecha vacía
+V00054,2026-04-19,C9999,P036,Tienda,6,289600,0.15,R3 id_cliente inexistente
+V00073,2026-03-27,C0099,P999,Web,6,91200,0,R3 id_producto inexistente
+V00093,2026-03-18,C0065,P020,Tienda,-2,172000,0.05,R4 cantidad inválida
+V00116,2026-04-18,C0050,P038,Marketplace,,304300,0,R4 cantidad inválida
+V00167,2026-06-10,C0028,P017,Web,6,150000,1.25,R5 descuento fuera de rango
+V00240,2026-04-27,C0048,P035,Marketplace,4,282200,0.1,R1 venta repetida

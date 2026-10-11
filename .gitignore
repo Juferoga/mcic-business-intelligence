@@ -56,3 +56,6 @@ Thumbs.db
 *.bak
 *.tmp
 *.temp
+
+# Artefactos derivados (regenerar con `make paquete`)
+2.Talleres/1.guia/paquete_powerbi.zip

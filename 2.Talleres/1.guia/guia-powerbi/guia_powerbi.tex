@@ -1,0 +1,578 @@
+% Guía para completar la parte de Power BI desde un Mac.  Compilar:  make guia  (desde la carpeta 1.guia)
+\documentclass[11pt,letterpaper]{article}
+\usepackage{ud-informe}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\setlength{\headheight}{22pt}
+\lstset{language={},numbers=none,basicstyle=\ttfamily\footnotesize}
+\lstdefinelanguage{DAX}{morekeywords={SUM,DIVIDE,COUNTROWS,CALCULATE,ALL,DISTINCT,VALUES,IF,BLANK},sensitive=false,
+  morecomment=[l]{//},morestring=[b]"}
+
+\renewcommand{\UDtitulo}{Cómo completar la parte de Power BI desde un Mac}
+\renewcommand{\UDsubtitulo}{Guía paso a paso para NovaRetail 360: máquina virtual, Power Query, modelo, DAX e informe}
+\renewcommand{\UDtipo}{Guía de apoyo -- Taller 1}
+\renewcommand{\UDasignatura}{Inteligencia de Negocios}
+\renewcommand{\UDdocente}{Nancy Yaneth Gelvez Garcia}
+\renewcommand{\UDestudiantes}{Juan Felipe Rodríguez Galindo -- 20261595004}
+\renewcommand{\UDencabezado}{Guía Power BI en Mac -- NovaRetail 360}
+
+\newcommand{\bs}{\textbackslash}
+\newcommand{\ui}[1]{\textbf{#1}}                 % texto de la interfaz
+\newcommand{\ok}[1]{\textcolor{udazul}{\textbf{#1}}}
+\newcommand{\aviso}[1]{\par\medskip\noindent\fcolorbox{udrojo}{udrojo!6}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\small #1}}\par\medskip}
+\newcommand{\nota}[1]{\par\medskip\noindent\fcolorbox{udazul}{udazul!6}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\small #1}}\par\medskip}
+
+\begin{document}
+\UDportada
+\tableofcontents
+\newpage
+
+%=============================================================================
+\section{Qué vas a lograr y qué necesitas saber primero}
+
+La guía del taller pide un archivo Power BI (\texttt{.pbix}) con las consultas y el modelo. Ya tienes todo el trabajo
+analítico hecho y verificado en Python y SQLite; lo que falta es \textbf{reproducirlo dentro de Power BI Desktop}:
+las consultas de Power Query, las relaciones del modelo, las medidas y un informe de tres páginas.
+
+\begin{table}[H]
+\centering
+\caption{Resumen de la tarea.}
+\begin{tabularx}{\linewidth}{l L}
+\toprule
+Resultado & \texttt{NovaRetail360.pbix} con 8 consultas, 7 relaciones, 11 medidas y 3 páginas de informe \\
+Tiempo estimado & 1,5 a 2 h en Power BI, más 1 a 1,5 h si es la primera vez que montas la máquina virtual \\
+Lo que ya está hecho & Reglas de limpieza, datos depurados, auditoría, bitácora, consultas SQL y cifras de referencia (para comprobar) \\
+Lo que \textbf{no} está verificado & Los guiones M y las medidas DAX de esta guía \textbf{no se ejecutaron} (no existe Power BI en macOS). Por eso cada paso tiene una comprobación con el número exacto que debes ver \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\aviso{\textbf{Si algo no coincide, no sigas.} Cada bloque termina con una caja \emph{Comprobación}. Si tu número es distinto,
+el error está en el paso que acabas de hacer, no más adelante. Usa la tabla de problemas de la sección~\ref{sec:problemas}.}
+
+\subsection{La mala noticia: Power BI Desktop no existe para Mac}
+
+Power BI Desktop solo corre en Windows. En un Mac con chip Apple (el tuyo es un \textbf{M1}) la forma habitual es
+una máquina virtual con \textbf{Windows 11 para ARM}; el propio Parallels publica una guía para instalar Power BI así
+(ver fuentes al final). El servicio web de Power BI no sustituye al programa: exige una cuenta de trabajo o estudio
+y \textbf{no acepta un correo personal como Gmail}; Power BI Desktop, en cambio, \textbf{no necesita iniciar sesión}.
+
+\subsection{Tu equipo y lo que implica}
+
+\begin{table}[H]
+\centering
+\caption{Lo que se detectó en tu Mac y qué hacer con ello.}
+\begin{tabularx}{\linewidth}{l l L}
+\toprule
+Dato & Valor & Consecuencia \\
+\midrule
+Procesador & Apple M1 & Sirve Windows 11 ARM. Nada de Boot Camp ni de Windows x86 \\
+Memoria & \textbf{8 GB} & Justo. La VM debe tener 4 GB y debes cerrar el resto de aplicaciones mientras trabajas \\
+Disco libre & \textbf{37 GB} & Justo. Windows 11 ARM más Power BI ocupan unos 25 GB. Libera 15 GB antes, o usa un disco externo \\
+Excel para Mac & 16.113 & Trae Power Query: sirve para \emph{comprobar} las consultas (Ruta C) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Elige tu ruta}
+
+\begin{table}[H]
+\centering
+\caption{Tres rutas. Se recomienda la A; la B es el plan de respaldo.}
+\begin{tabularx}{\linewidth}{l L L L}
+\toprule
+ & \textbf{A. Máquina virtual} & \textbf{B. Otro computador con Windows} & \textbf{C. Solo Excel para Mac} \\
+\midrule
+Genera el \texttt{.pbix} & Sí & Sí & \textbf{No} \\
+Costo & Prueba gratis del hipervisor; luego depende de cuál & Gratis (sala de cómputo, compañero) & Ya lo tienes \\
+Riesgo con tu Mac & Memoria y disco justos & Ninguno & Ninguno \\
+Cuándo & Si puedes liberar 15 GB & Si la VM va muy lenta o no hay espacio & Para validar las consultas o como evidencia (la guía acepta evidencias si no hay Power BI) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\nota{\textbf{Recomendación.} Intenta la Ruta A. Si tras instalar Windows la VM va lenta con 4 GB, pasa a la Ruta B: llevas
+el paquete (\texttt{paquete\_powerbi.zip}) en una USB a cualquier Windows y haces solo las secciones 4 a 8; son unas
+2 horas. La Ruta C puedes hacerla \emph{además}, en tu Mac, para comprobar números.}
+
+\subsection{Qué llevar a Windows: el paquete}
+
+Desde la carpeta \texttt{1.guia} ejecuta \texttt{make paquete}. Crea \texttt{paquete\_powerbi.zip} con:
+
+\begin{itemize}
+  \item los 5 CSV originales y \texttt{bitacora\_calidad.csv};
+  \item una carpeta \texttt{consultas\_M} con un archivo \texttt{.pq} por consulta y el tema de colores \texttt{ud-tema-powerbi.json};
+  \item esta guía en PDF.
+\end{itemize}
+
+\aviso{\textbf{No copies el código M desde el PDF.} Los saltos de línea y las comillas se dañan. Copia siempre desde los
+archivos \texttt{.pq} (ábrelos con TextEdit o con tu editor): \texttt{Cmd+A}, \texttt{Cmd+C} en el Mac, y pega en Windows.}
+
+%=============================================================================
+\section{Ruta A: Windows 11 ARM en una máquina virtual}
+
+\subsection{Antes de empezar: liberar espacio y memoria}
+
+\begin{enumerate}
+  \item Apple $\rightarrow$ \ui{Ajustes del Sistema} $\rightarrow$ \ui{General} $\rightarrow$ \ui{Almacenamiento}: revisa qué ocupa espacio. Meta: \textbf{más de 50 GB libres} (tienes 37).
+  \item Vacía la papelera y mueve fotos o videos a un disco externo o a la nube.
+  \item Si no logras 50 GB, instala la VM en un disco externo rápido (SSD).
+  \item Cierra navegadores con muchas pestañas, Teams, Docker, etc. antes de encender la VM.
+\end{enumerate}
+
+\subsection{Elegir el programa de virtualización}
+
+\begin{table}[H]
+\centering
+\caption{Opciones para ejecutar Windows 11 ARM en un Mac con chip M. Verifica precios y licencias vigentes.}
+\begin{tabularx}{\linewidth}{l L L}
+\toprule
+Programa & Ventaja & Inconveniente \\
+\midrule
+\textbf{Parallels Desktop} & Es el más fácil: su asistente descarga Windows 11 ARM por ti y tiene guía propia para Power BI & De pago tras la prueba gratuita \\
+VMware Fusion & Gratis para uso personal según la política vigente (verifícalo) & Debes conseguir tú la imagen (ISO) de Windows 11 ARM \\
+UTM & Gratis (versión de GitHub) & Más pasos manuales; más lento \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Los pasos siguientes usan Parallels porque es la ruta con menos fricción. Con los otros programas cambia cómo se crea la
+VM, pero la configuración de recursos y todo lo que ocurre dentro de Windows es igual.
+
+\subsection{Crear la máquina virtual (Parallels)}
+
+\begin{enumerate}
+  \item Descarga Parallels Desktop desde su sitio oficial, instálalo y acepta la prueba gratuita.
+  \item En el \ui{Asistente de instalación} elige \ui{Instalar Windows}. El asistente descarga Windows 11 para ARM.
+        (Sin Parallels: busca ``Windows 11 Arm64 ISO'' en el sitio de Microsoft.)
+  \item \textbf{Antes de arrancar} abre \ui{Configuración} de la VM y ajusta:
+  \begin{itemize}
+    \item \ui{General $\rightarrow$ CPU y memoria}: \textbf{2 procesadores} y \textbf{4096 MB} de memoria.
+    \item \ui{Hardware $\rightarrow$ Disco}: 64 GB (el archivo crece solo lo que se use).
+    \item \ui{Opciones $\rightarrow$ Optimización}: ``Más rápido'' en rendimiento de la VM, y deja el modo de consumo bajo para ahorrar batería.
+  \end{itemize}
+  \item Arranca la VM, completa la instalación de Windows (puedes omitir la cuenta de Microsoft con una cuenta local si te lo ofrece) y deja que \ui{Windows Update} termine.
+\end{enumerate}
+
+\nota{Los nombres de los menús de Parallels y de Windows cambian entre versiones; si no ves uno, busca el equivalente por palabra clave.}
+
+\nota{Windows sin activar funciona para esta tarea; solo limita la personalización y muestra una marca de agua. No
+necesitas comprar licencia para un taller.}
+
+\subsection{Instalar Power BI Desktop dentro de Windows}
+
+\begin{enumerate}
+  \item Dentro de Windows: \ui{Configuración $\rightarrow$ Windows Update $\rightarrow$ Buscar actualizaciones}, instala todo y reinicia.
+  \item En el navegador de Windows, descarga \textbf{Power BI Desktop} desde el sitio oficial de Microsoft, versión \textbf{x64} (archivo \texttt{PBIDesktopSetup\_x64.exe}). Windows 11 ARM ejecuta programas x64 por emulación.
+  \item Si el instalador falla, borra el archivo, reinicia Windows y repite. Como último recurso prueba la versión de 32 bits (\texttt{PBIDesktopSetup.exe}).
+  \item Abre Power BI Desktop. Si pide iniciar sesión, \textbf{ciérralo} (\ui{X}); no hace falta cuenta.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption{Dos ajustes de rendimiento y comodidad dentro de Power BI Desktop.}
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+Dónde & Qué hacer \\
+\midrule
+\ui{Archivo $\rightarrow$ Opciones y configuración $\rightarrow$ Opciones $\rightarrow$ Carga de datos} & Desmarca la detección automática de relaciones (``Importar relaciones de orígenes de datos al cargar'' y ``Detectar automáticamente nuevas relaciones''); las crearás tú \\
+\ui{Opciones $\rightarrow$ Archivo actual $\rightarrow$ Privacidad} (o \ui{Global $\rightarrow$ Privacidad}) & Elige \ui{Omitir siempre la configuración de nivel de privacidad}. Evita el error \texttt{Formula.Firewall} y es seguro aquí: todo es local y sintético \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Pasar los archivos a Windows}
+
+La forma más simple y fiable: \textbf{arrastra} \texttt{paquete\_powerbi.zip} desde el Mac a la ventana de Windows,
+o cópialo a una carpeta compartida. Dentro de Windows descomprime el zip (crea la carpeta \texttt{paquete\_powerbi}). Crea \texttt{C:\bs NovaRetail\bs datos\bs} y mueve allí
+los \textbf{seis CSV}; mueve la carpeta \texttt{consultas\_M} a \texttt{C:\bs NovaRetail\bs}. Debe quedar así:
+
+\begin{lstlisting}
+C:\NovaRetail\datos\clientes.csv
+C:\NovaRetail\datos\productos.csv
+C:\NovaRetail\datos\metas.csv
+C:\NovaRetail\datos\devoluciones.csv
+C:\NovaRetail\datos\ventas_sucias.csv
+C:\NovaRetail\datos\bitacora_calidad.csv
+C:\NovaRetail\consultas_M\*.pq   y   ud-tema-powerbi.json
+\end{lstlisting}
+
+\aviso{Trabaja desde \texttt{C:\bs} (el disco de la VM), no desde la carpeta compartida con el Mac: la lectura es más lenta y a veces hay problemas de permisos con las carpetas compartidas.}
+
+%=============================================================================
+\section{Ruta B y Ruta C en pocas líneas}
+
+\subsection{Ruta B: otro computador con Windows}
+
+Copia \texttt{paquete\_powerbi.zip} en una USB o súbelo a tu Drive. En un Windows (sala de cómputo, compañero, un equipo
+de la universidad) instala Power BI Desktop (descarga gratuita; sin iniciar sesión) y sigue esta guía desde la
+sección~\ref{sec:parametro}. Guarda el \texttt{.pbix} y las capturas en la USB antes de salir.
+
+\subsection{Ruta C: Excel para Mac (comprobación y evidencias)}
+
+Excel para Mac incluye el editor de Power Query para importar y transformar CSV. Sirve para comprobar que la lógica de
+las consultas produce los conteos esperados, pero \textbf{no genera un \texttt{.pbix}}.
+
+\begin{enumerate}
+  \item \ui{Datos $\rightarrow$ Obtener datos (Power Query) $\rightarrow$ Desde texto (CSV)}, elige \texttt{ventas\_sucias.csv} y \ui{Transformar datos}.
+  \item En el editor busca \ui{Editor avanzado} en la pestaña \ui{Inicio}. En algunas versiones de Mac puede no estar; si no aparece, no insistas: pasa a la Ruta A o B.
+  \item Si aparece, pega el contenido de \texttt{ventas\_base.pq} cambiando la primera línea de \texttt{Origen} por la ruta de tu Mac, y comprueba los conteos de la sección~\ref{sec:parte-a}.
+  \item Guarda capturas de los \emph{Pasos aplicados} y de los conteos: la guía del taller acepta ``evidencias de las transformaciones'' si no dispones de Power BI.
+\end{enumerate}
+
+%=============================================================================
+\section{Parte A en Power Query}
+\label{sec:parte-a}
+
+\subsection{El parámetro de la ruta}
+\label{sec:parametro}
+
+\begin{enumerate}
+  \item Pestaña \ui{Inicio} $\rightarrow$ \ui{Transformar datos} (se abre el Editor de Power Query).
+  \item \ui{Inicio} $\rightarrow$ \ui{Administrar parámetros} $\rightarrow$ \ui{Nuevo parámetro}.
+  \item \ui{Nombre}: \texttt{RutaDatos} (exacto, respeta mayúsculas). \ui{Tipo}: \ui{Texto}. \ui{Valor actual}: \texttt{C:\bs NovaRetail\bs datos\bs}
+        --- \textbf{con la barra final}. \ui{Aceptar}.
+\end{enumerate}
+
+\subsection{Crear cada consulta}
+
+Para cada una: \ui{Inicio} $\rightarrow$ \ui{Nuevo origen} $\rightarrow$ \ui{Consulta en blanco}; abre \ui{Editor avanzado};
+\textbf{borra todo} el contenido; pega el archivo \texttt{.pq} correspondiente; \ui{Listo}. Después, clic derecho sobre la consulta
+$\rightarrow$ \ui{Cambiar nombre} con el nombre \textbf{exacto} de la tabla. \textbf{Respeta este orden}, porque unas consultas llaman a otras por nombre.
+
+\begin{table}[H]
+\centering
+\caption{Orden de creación y comprobación de cada consulta.}
+\label{tab:orden}
+\begin{tabularx}{\linewidth}{r l l L}
+\toprule
+\# & Nombre exacto & Archivo & Comprobación \\
+\midrule
+1 & \texttt{clientes} & \texttt{clientes.pq} & 120 filas, 4 columnas \\
+2 & \texttt{productos} & \texttt{productos.pq} & 40 filas; \texttt{precio\_lista} es número entero \\
+3 & \texttt{metas} & \texttt{metas.pq} & 30 filas \\
+4 & \texttt{ventas\_base} & \texttt{ventas\_base.pq} & \textbf{1\,201} filas (no se elimina nada); ver abajo \\
+5 & \texttt{ventas\_limpias} & \texttt{ventas\_limpias.pq} & \textbf{1\,194} filas \\
+6 & \texttt{auditoria\_rechazados} & \texttt{auditoria\_rechazados.pq} & \textbf{7} filas \\
+7 & \texttt{devoluciones} & \texttt{devoluciones.pq} & 70 filas \\
+8 & \texttt{bitacora\_calidad} & \texttt{bitacora\_calidad.pq} & 12 filas \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Cómo ver el número de filas.} Abajo a la izquierda del editor, activa \ui{Vista $\rightarrow$ Perfil de columna $\rightarrow$ Habilitar}
+(o ve a \ui{Vista $\rightarrow$ Estadísticas de columna}); la barra de estado muestra \emph{n columnas, n filas}.
+Si dice ``999+ filas'', clic en ese texto y elige \ui{Perfil de columna basado en el conjunto de datos completo}.
+
+\paragraph{Importante para \texttt{ventas\_base}.} Es un paso intermedio. Clic derecho $\rightarrow$ desmarca \ui{Habilitar carga}
+(el nombre sale en cursiva): así no se carga al modelo, pero las otras consultas siguen usándola.
+
+\nota{\textbf{Comprobación de la limpieza.} \texttt{ventas\_limpias} (1\,194) $+$ \texttt{auditoria\_rechazados} (7) $=$ 1\,201 $=$ filas de
+\texttt{ventas\_base}. En \texttt{auditoria\_rechazados} la columna \texttt{motivo\_rechazo} debe mostrar: 2 de
+\emph{R4 cantidad inválida} y 1 de cada: \emph{R1 venta repetida}, \emph{R2 fecha vacía}, \emph{R3 id\_cliente inexistente},
+\emph{R3 id\_producto inexistente} y \emph{R5 descuento fuera de rango}. Los ids son V00039, V00054, V00073, V00093, V00116,
+V00167 y V00240.}
+
+\subsection{Qué hace cada consulta (para explicarlo en la entrega)}
+
+\begin{table}[H]
+\centering
+\caption{Regla de la guía del taller $\rightarrow$ paso de Power Query.}
+\begin{tabularx}{\linewidth}{l L L}
+\toprule
+Punto de la guía & Qué hace & Dónde \\
+\midrule
+1. Importación y diagnóstico & Todo se importa como texto; ningún tipo automático oculta errores & \texttt{ventas\_base}, paso \texttt{Texto} \\
+2. Bitácora & 12 incidencias con regla, evidencia, impacto y decisión & \texttt{bitacora\_calidad} \\
+3. Normalización & \texttt{Text.Trim} + \texttt{Text.Proper} para el canal; fecha con cultura \texttt{es-CO} explícita & \texttt{ventas\_base}, pasos \texttt{Canal} y \texttt{Fecha} \\
+4. Auditoría & Complemento exacto de las filas válidas, con motivo & \texttt{auditoria\_rechazados} \\
+5. Variables calculadas & \texttt{importe\_bruto} e \texttt{importe\_neto} & \texttt{ventas\_limpias} \\
+6. Reproducibilidad & Los \emph{Pasos aplicados} son la receta; reglas como condiciones, no como valores reemplazados & Todo el panel de pasos \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Cargar al modelo}
+
+\ui{Inicio} $\rightarrow$ \ui{Cerrar y aplicar}. Power BI carga 7 tablas (todas menos \texttt{ventas\_base}) y el parámetro.
+
+%=============================================================================
+\section{Parte B: el modelo}
+
+\subsection{Dos tablas auxiliares}
+
+Las metas se definen por mes y región; las ventas, por transacción. Para filtrar ambas a la vez hace falta una tabla
+de regiones y otra de periodos. \ui{Vista de tabla} $\rightarrow$ \ui{Nueva tabla}, y escribe cada una:
+
+\begin{lstlisting}[language=DAX]
+dim_region  = DISTINCT ( clientes[region] )
+dim_periodo = DISTINCT ( metas[periodo] )
+\end{lstlisting}
+
+\nota{\textbf{Comprobación.} \texttt{dim\_region} tiene 5 filas y \texttt{dim\_periodo} tiene 6.}
+
+\subsection{Relaciones}
+
+Abre la \ui{Vista de modelo} (icono de tres cajas). Si ves relaciones que no estén en la tabla, \textbf{bórralas}
+(clic derecho $\rightarrow$ \ui{Eliminar}). Crea las que falten arrastrando el campo de la tabla de la izquierda sobre el de la derecha.
+
+\begin{table}[H]
+\centering
+\caption{Las siete relaciones. Cardinalidad ``varios a uno'' ($\ast:1$), dirección de filtro \ui{Única}, todas activas.}
+\begin{tabularx}{\linewidth}{r l l L}
+\toprule
+\# & Desde (muchos) & Hacia (uno) & Para qué sirve \\
+\midrule
+1 & \texttt{ventas\_limpias[id\_cliente]} & \texttt{clientes[id\_cliente]} & Cada venta tiene un cliente \\
+2 & \texttt{ventas\_limpias[id\_producto]} & \texttt{productos[id\_producto]} & Cada venta tiene un producto \\
+3 & \texttt{clientes[region]} & \texttt{dim\_region[region]} & Lleva la región a las ventas \\
+4 & \texttt{metas[region]} & \texttt{dim\_region[region]} & Lleva la región a las metas \\
+5 & \texttt{ventas\_limpias[periodo]} & \texttt{dim\_periodo[periodo]} & Lleva el mes a las ventas \\
+6 & \texttt{metas[periodo]} & \texttt{dim\_periodo[periodo]} & Lleva el mes a las metas \\
+7 & \texttt{devoluciones[id\_venta]} & \texttt{ventas\_limpias[id\_venta]} & Devolución ligada a su venta original \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Sin relación.} \texttt{auditoria\_rechazados} y \texttt{bitacora\_calidad} quedan sueltas a propósito: son tablas de consulta, no de análisis.
+
+\paragraph{Qué debe verse.} \texttt{ventas\_limpias} en el centro, con \texttt{clientes}, \texttt{productos} y \texttt{dim\_periodo} alrededor y
+\texttt{devoluciones} colgando de ella. \texttt{metas} \textbf{no} se une a las ventas directamente: se encuentran en
+\texttt{dim\_region} y \texttt{dim\_periodo}. Es la solución en Power BI al problema de granularidad que se explica en el informe (la meta no se repite por transacción).
+
+\aviso{\textbf{Error típico.} Si Power BI crea una relación \ui{varios a varios} entre \texttt{metas} y \texttt{ventas\_limpias}
+por llamarse igual \texttt{periodo}, elimínala. Esa es justo la unión que multiplicaría las metas 39,9 veces.}
+
+\subsection{Mostrar el modelo en la entrega}
+
+En la \ui{Vista de modelo}, ordena las tablas (ventas al centro), y toma una captura. Esa captura es el
+\textbf{diagrama del modelo en Power BI}; acompáñala con el diagrama entidad--relación del informe.
+
+%=============================================================================
+\section{Medidas DAX}
+
+Selecciona la tabla \texttt{ventas\_limpias} en el panel \ui{Datos}, \ui{Nueva medida}, y escribe una por una. Los
+nombres con espacios y tildes son válidos.
+
+\begin{lstlisting}[language=DAX]
+Ventas Netas = SUM ( ventas_limpias[importe_neto] )
+Ventas Brutas = SUM ( ventas_limpias[importe_bruto] )
+Transacciones = COUNTROWS ( ventas_limpias )
+Ticket Promedio = DIVIDE ( [Ventas Netas], [Transacciones] )
+Unidades Vendidas = SUM ( ventas_limpias[cantidad] )
+Unidades Devueltas = SUM ( devoluciones[cantidad_devuelta] )
+Valor Devuelto = SUM ( devoluciones[valor_devuelto] )
+Tasa Devolución Unidades = DIVIDE ( [Unidades Devueltas], [Unidades Vendidas] )
+Meta = SUM ( metas[meta_ventas] )
+Cumplimiento % = DIVIDE ( [Ventas Netas], [Meta] )
+Participación Canal % =
+    DIVIDE ( [Ventas Netas], CALCULATE ( [Ventas Netas], ALL ( ventas_limpias[canal] ) ) )
+\end{lstlisting}
+
+Da formato: \texttt{Cumplimiento \%}, \texttt{Tasa Devolución Unidades} y \texttt{Participación Canal \%} como \ui{Porcentaje} con 1 decimal
+(pestaña \ui{Herramientas de medida}); las demás como \ui{Número entero} con separador de miles.
+
+\subsection{Comprobación de las medidas}
+
+Crea una tarjeta o una tabla temporal con cada medida (sin filtros) y compara:
+
+\begin{table}[H]
+\centering
+\caption{Valores que debes obtener. Vienen de la base SQLite, comprobada contra las consultas de referencia de la guía.}
+\begin{tabularx}{\linewidth}{L r}
+\toprule
+Medida (sin filtros) & Valor esperado \\
+\midrule
+Ventas Netas & 700\,001\,140 \\
+Ventas Brutas & 737\,570\,500 \\
+Transacciones & 1\,194 \\
+Unidades Vendidas & 4\,196 \\
+Unidades Devueltas & 174 \\
+Valor Devuelto & 29\,963\,315 \\
+Tasa Devolución Unidades & 4,2 \% (4,15 \% con 2 decimales) \\
+Meta & 1\,715\,000\,000 \\
+Cumplimiento \% & 40,8 \% \\
+Ticket Promedio & 586\,266 \\
+\midrule
+Por región, Ventas Netas: Bucaramanga / Cali / Bogotá / Medellín / Barranquilla & 142\,790\,985 / 147\,946\,150 / 131\,225\,100 / 137\,577\,435 / 140\,461\,470 \\
+Participación: Web / Marketplace / Tienda & 33,5 \% / 33,5 \% / 33,0 \% \\
+Cumplimiento Bogotá, enero 2026 & 24,9 \% \\
+Cumplimiento Bogotá, marzo 2026 & 57,6 \% \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\aviso{\textbf{Si la meta total sale distinta de 1\,715\,000\,000}, hay una relación mal hecha: revisa que \texttt{metas}
+se una a \texttt{dim\_region} y \texttt{dim\_periodo} y no a \texttt{ventas\_limpias}. \textbf{Si una medida de ventas sale mayor},
+revisa que \texttt{ventas\_limpias} tenga 1\,194 filas (no 1\,201).}
+
+%=============================================================================
+\section{El informe de Power BI}
+
+\subsection{Tema de colores de la Universidad}
+
+\ui{Vista $\rightarrow$ Temas $\rightarrow$ Examinar temas} y elige \texttt{ud-tema-powerbi.json}. Aplica la paleta del manual de marca
+(azul \texttt{\#1291C0}, rojo \texttt{\#ED3237}, dorado \texttt{\#B49739}, verde \texttt{\#00A859}, gris plata \texttt{\#98999A}, sable \texttt{\#373435})
+y las fuentes Cambria y Times New Roman. Si Power BI rechaza el archivo, omite este paso: no afecta a los datos.
+
+\subsection{Página 1: Resumen ejecutivo}
+
+\begin{enumerate}
+  \item Renombra la página: clic derecho en la pestaña inferior $\rightarrow$ \ui{Cambiar nombre} $\rightarrow$ \texttt{Resumen ejecutivo}.
+  \item \textbf{Tres tarjetas} (visual \ui{Tarjeta}): \texttt{Ventas Netas}, \texttt{Cumplimiento \%} y \texttt{Tasa Devolución Unidades}. Son los tres indicadores del taller.
+  \item \textbf{Ventas frente a meta por mes}: visual \ui{Gráfico de líneas y columnas agrupadas}. Eje X: \texttt{dim\_periodo[periodo]}; columnas: \texttt{Ventas Netas}; línea: \texttt{Meta}. Es un solo eje porque ambas están en pesos.
+  \item \textbf{Participación por canal}: \ui{Gráfico de barras}. Eje: \texttt{ventas\_limpias[canal]}; valores: \texttt{Participación Canal \%}.
+  \item \textbf{Devolución por categoría}: \ui{Gráfico de barras}. Eje: \texttt{productos[categoria]}; valores: \texttt{Tasa Devolución Unidades}. Debe verse Tecnología en 6,1 \%.
+  \item \textbf{Segmentador} (\ui{Segmentación de datos}) con \texttt{dim\_region[region]} para filtrar por región.
+  \item \textbf{Recomendación}: \ui{Insertar $\rightarrow$ Cuadro de texto} con el texto:
+\end{enumerate}
+
+\begin{quote}\small
+\textbf{Recomendación.} Validar cómo se definió la meta antes de juzgar a las regiones: ninguna combinación mes--región la alcanza y el cumplimiento es casi igual en todas (38,9 \% a 41,8 \%). Investigar las devoluciones de Tecnología (6,10 \% frente a 4,15 \% global). Limitaciones: datos sintéticos, seis meses y sin costos (ingreso, no margen).
+\end{quote}
+
+\aviso{Si pones un segmentador de \emph{categoría} o \emph{canal}, la medida \texttt{Meta} no cambia: las metas solo existen por mes y región.
+Es una limitación del dato, no un error del informe. Menciónalo en la entrega.}
+
+\subsection{Página 2: Cumplimiento de metas}
+
+\begin{enumerate}
+  \item Renombra: \texttt{Cumplimiento de metas}.
+  \item Visual \ui{Matriz}. Filas: \texttt{dim\_region[region]}; Columnas: \texttt{dim\_periodo[periodo]}; Valores: \texttt{Cumplimiento \%}.
+  \item \ui{Formato $\rightarrow$ Celdas $\rightarrow$ Color de fondo $\rightarrow$ fx} (formato condicional), \ui{Estilo}: \ui{Degradado}; mínimo 0 \% (azul muy claro), máximo 100 \% (azul \texttt{\#1291C0}). Todas las celdas quedarán en tonos medios: ninguna llega a 100 \%.
+  \item Debajo, una \ui{Tabla} con \texttt{dim\_region[region]}, \texttt{Ventas Netas}, \texttt{Meta} y \texttt{Cumplimiento \%}. El total debe dar 40,8 \%.
+\end{enumerate}
+
+\subsection{Página 3: Calidad de datos}
+
+\begin{enumerate}
+  \item Renombra: \texttt{Calidad de datos}.
+  \item \ui{Tabla} con \texttt{bitacora\_calidad}: \texttt{n}, \texttt{id\_registro}, \texttt{regla}, \texttt{valor\_observado}, \texttt{decision}, \texttt{accion}.
+  \item \ui{Tabla} con \texttt{auditoria\_rechazados}: \texttt{id\_venta}, \texttt{motivo\_rechazo}. Debe tener 7 filas.
+  \item Dos tarjetas con \ui{Recuento} del campo \texttt{id\_venta}: una sobre \texttt{ventas\_limpias} (1\,194) y otra sobre
+        \texttt{auditoria\_rechazados} (7).
+\end{enumerate}
+
+\subsection{Guardar}
+
+\ui{Archivo $\rightarrow$ Guardar como} $\rightarrow$ \texttt{NovaRetail360.pbix}. Si cambias de computador, el parámetro
+\texttt{RutaDatos} se corrige en \ui{Transformar datos $\rightarrow$ Editar parámetros}.
+
+%=============================================================================
+\section{Evidencias y entrega}
+
+La Parte D de la guía pide el archivo Power BI, la bitácora, el diagrama ER, cinco consultas SQL y tres indicadores con una
+recomendación. Con lo que ya tienes y lo que acabas de hacer, el paquete queda así:
+
+\begin{table}[H]
+\centering
+\caption{Qué entregar y de dónde sale.}
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+Requisito de la guía & Archivo \\
+\midrule
+Archivo Power BI (\texttt{.pbix}) con consultas y modelo & \texttt{NovaRetail360.pbix} (esta guía) \\
+Bitácora de calidad y decisiones & \texttt{salida/bitacora\_calidad.csv} y el informe PDF (sección 3.2) \\
+Diagrama entidad--relación con cardinalidades y claves & Informe PDF (figura 2) y captura de la vista de modelo \\
+Cinco consultas SQL comentadas & \texttt{sql/20\_consultas.sql} y el anexo del informe \\
+Tres indicadores y recomendación ejecutiva con limitaciones & Informe PDF (sección 6) y la página 1 del \texttt{.pbix} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Capturas que conviene guardar}
+
+\begin{enumerate}
+  \item Editor de Power Query con \emph{Pasos aplicados} de \texttt{ventas\_base} (muestra la lógica reproducible).
+  \item Conteos: \texttt{ventas\_limpias} 1\,194 y \texttt{auditoria\_rechazados} 7.
+  \item La \ui{Vista de modelo} con las 7 relaciones.
+  \item Las tres páginas del informe.
+\end{enumerate}
+
+\subsection{Cómo contarlo en una frase}
+
+\emph{``En Power Query importé todo como texto, apliqué reglas expresadas como condiciones, separé los registros rechazados en una consulta
+de auditoría sin eliminarlos y calculé importes; en el modelo uní ventas y metas por dimensiones de región y mes para no
+multiplicar las metas, y comprobé en cada paso los conteos y totales contra una implementación independiente en SQL.''}
+
+\subsection{Sé transparente sobre lo que no se probó}
+
+Los guiones M y las medidas DAX de esta guía fueron escritos y revisados con cuidado, pero \textbf{no se ejecutaron}
+(el desarrollo se hizo en macOS). Por eso las comprobaciones numéricas: si tu \texttt{.pbix} reproduce esos números,
+la implementación es correcta. Si tuviste que corregir algún guion, anótalo en la entrega: es parte de la trazabilidad.
+
+%=============================================================================
+\section{Problemas frecuentes}
+\label{sec:problemas}
+
+\begin{table}[H]
+\centering
+\caption{Síntoma, causa probable y solución.}
+\footnotesize
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+Síntoma & Causa probable & Qué hacer \\
+\midrule
+\texttt{Formula.Firewall} al cargar \texttt{ventas\_base} & Niveles de privacidad entre consultas que leen archivos & Opciones $\rightarrow$ Privacidad $\rightarrow$ \ui{Omitir siempre} (sección 2.4) \\
+``La tabla no contiene la columna \dots'' o ``No se encontró \texttt{clientes}'' & Nombre de consulta distinto (M distingue mayúsculas) & Renombra la consulta con el nombre exacto de la tabla~\ref{tab:orden} \\
+``No se encontró el archivo'' & \texttt{RutaDatos} sin la barra final, o CSV en otra carpeta & Revisa el parámetro: \texttt{C:\bs NovaRetail\bs datos\bs} \\
+\texttt{ventas\_base} tiene filas de más o de menos & Error al pegar el M & Vuelve a pegar desde el \texttt{.pq}, no desde el PDF \\
+Error en \texttt{Table.ExpandTableColumn} de \texttt{ventas\_base} & Columna repetida al expandir & Usa el \texttt{.pq} actual de \texttt{power\_query/}: ya excluye \texttt{id\_venta} \\
+Fechas como texto o error & Falta el paso de fecha o la cultura & El paso \texttt{Fecha} usa \texttt{Culture = "es-CO"}; no lo quites \\
+Meta total muy mayor que 1\,715 M & Relación varios a varios \texttt{metas}--\texttt{ventas} & Elimínala (sección 5.2) \\
+Cumplimiento \% en blanco & Falta relación a \texttt{dim\_periodo} o \texttt{dim\_region} & Revisa las relaciones 3 a 6 \\
+Medida de ventas $>$ 700\,001\,140 & Cargaste las 1\,201 filas & Revisa que \texttt{ventas\_limpias} filtre (1\,194) \\
+VM muy lenta & 8 GB de RAM compartidos & Cierra apps en el Mac, deja 4 GB y 2 CPU a la VM, o usa la Ruta B \\
+El instalador de Power BI falla & ARM64 y emulación x64 & Actualiza Windows, reinicia, repite; luego prueba el instalador de 32 bits \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Si quieres reproducir sin M: equivalencias con la interfaz}
+
+Si prefieres hacer los pasos con el ratón en vez de pegar código, estas son las operaciones equivalentes:
+
+\begin{table}[H]
+\centering
+\caption{Código M $\rightarrow$ botón del editor.}
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+Qué hace el código & En la interfaz \\
+\midrule
+Quitar espacios y unificar mayúsculas del canal & Seleccionar \texttt{canal} $\rightarrow$ \ui{Transformar} $\rightarrow$ \ui{Formato} $\rightarrow$ \ui{Recortar} y luego \ui{Poner en mayúsculas cada palabra} \\
+Fecha en dos formatos & \ui{Transformar} $\rightarrow$ \ui{Tipo de datos} $\rightarrow$ \ui{Usando configuración regional} $\rightarrow$ Fecha, español (Colombia); repite con inglés si hace falta \\
+Cruzar con \texttt{clientes} sin perder filas & \ui{Inicio} $\rightarrow$ \ui{Combinar} $\rightarrow$ \ui{Combinar consultas}, tipo \ui{Externa izquierda} \\
+Filtrar filas válidas / rechazadas & Filtros de columna, o una columna condicional \ui{Agregar columna} $\rightarrow$ \ui{Columna condicional} \\
+Importe bruto y neto & \ui{Agregar columna} $\rightarrow$ \ui{Columna personalizada} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%=============================================================================
+\section*{Fuentes y verificaciones}
+\addcontentsline{toc}{section}{Fuentes y verificaciones}
+
+Consultadas el 8 de octubre de 2026. Los precios, licencias y menús cambian con las versiones: confirma en el sitio oficial.
+
+\begin{itemize}\small
+  \item Parallels, ``Install Power BI in Windows 11 running on a Mac with Apple silicon using Parallels Desktop'': \texttt{kb.parallels.com/en/129794}.
+  \item Respuestas de Microsoft (Q\&A y comunidad) sobre cuentas: el servicio web de Power BI no admite correos personales; Power BI Desktop no requiere iniciar sesión.
+  \item Documentación de Excel para Mac con Power Query (disponible desde la versión 16.69; el equipo tiene la 16.113). \textbf{No se pudo confirmar} si el \emph{Editor avanzado} está presente en la edición de Mac.
+  \item \textbf{No verificado:} que Power BI Desktop x64 corra sin problemas en tu VM concreta; la guía de Parallels y algunos usuarios lo reportan, pero hay reportes de fallos en el instalador.
+\end{itemize}
+
+\section*{Anexo: código M de las consultas}
+\addcontentsline{toc}{section}{Anexo: código M de las consultas}
+
+\textbf{Solo para leer.} Para usar el código, copia desde los archivos \texttt{.pq}.
+
+\subsection*{ventas\_base}
+\lstinputlisting[basicstyle=\ttfamily\tiny]{../power_query/ventas_base.pq}
+\subsection*{ventas\_limpias}
+\lstinputlisting[basicstyle=\ttfamily\tiny]{../power_query/ventas_limpias.pq}
+\subsection*{auditoria\_rechazados}
+\lstinputlisting[basicstyle=\ttfamily\tiny]{../power_query/auditoria_rechazados.pq}
+\subsection*{devoluciones}
+\lstinputlisting[basicstyle=\ttfamily\tiny]{../power_query/devoluciones.pq}
+
+\end{document}
