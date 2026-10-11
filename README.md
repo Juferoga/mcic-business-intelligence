@@ -6,34 +6,52 @@
 
 [![Autor: Juferoga](https://img.shields.io/badge/Autor-Juferoga-0a66c2?style=flat-square)](https://github.com/Juferoga) [![License: GPL2](https://img.shields.io/badge/License-GPL2-blue?style=flat-square)](LICENSE)
 
-Repositorio de apoyo para la asignatura *Inteligencia de Negocios* (Maestría). Aquí se conservan los talleres, tareas y el proyecto final desarrollado durante el semestre.
+Repositorio de la asignatura *Inteligencia de Negocios* (Maestría). Aquí se conservan los talleres, trabajos y el proyecto final desarrollados durante el semestre.
 
 **Contenido rápido**
 
-- **Estado:** Material docente y trabajos del curso.
+- **Estado:** En curso — semestre 2026-3
 - **Autor:** Juan Felipe Rodríguez Galindo (Juferoga)
 - **Docente:** Nancy Yaneth Gelvez Garcia
 - **Licencia:** GPL2 — ver archivo `LICENSE`
 
 **Tabla de contenidos**
 
-- Descripción
+- Avance
 - Estructura del repositorio
+- Cómo reproducir el Taller 1
 - Licencia
 
-**Descripción**
+## Avance
 
-Este repositorio centraliza los ejercicios, talleres y el Proyecto Final realizados en la asignatura. Está organizado por carpetas numeradas para facilitar la navegación y revisión.
+| Entrega | Tema | Carpeta |
+|---|---|---|
+| Taller 1 | Guía *NovaRetail 360*: limpieza de datos, Power Query, modelo en estrella y SQL, informe y presentación | [`2.Talleres/1.guia/`](2.Talleres/1.guia/) |
+| Proyecto final | Datos base de los sorteos de loterías de Colombia (corte 2026-09-02) y panel en Excel | [`4.ProyectoFinal/`](4.ProyectoFinal/) |
 
-**Estructura del repositorio (resumen)**
+## Estructura del repositorio
 
 - `0.Bibliografia/` — Material de referencia y recursos bibliográficos.
 - `1.Tareas/` — Entregas formales por actividad.
 - `2.Talleres/` — Ejercicios prácticos y pequeñas aplicaciones.
-- `3.Trabajos/` — Trabajos grupales y entregas mayores.
-- `4.ProyectoFinal/` — Código y documentación del proyecto final.
+  - `1.guia/` — Taller 1 (ver su [README](2.Talleres/1.guia/README.md)): `pipeline/` (limpieza y gráficos en Python), `power_query/` (consultas M), `sql/` (esquema, estrella, consultas y calidad), `informe/`, `presentacion/`, `guia-powerbi/`, `portal/` y `salida/`.
+- `3.Trabajos/` — Trabajos y entregas mayores.
+- `4.ProyectoFinal/` — Datos y documentación del proyecto final.
+- `docs/` — Página estática `index.html` (Loterías de Colombia · Sorteos 2020–2023).
 - `README.md` — Este archivo.
 - `LICENSE` — Licencia del repositorio.
+
+## Cómo reproducir el Taller 1
+
+Requiere `python3`, `uv` y `tectonic`, además del manual de marca de la UD (plantillas LaTeX) del [repositorio raíz](https://github.com/Juferoga/mcic).
+
+```bash
+cd 2.Talleres/1.guia
+make todo        # datos, portal, informe, presentación y revisión del PDF
+make paquete     # genera paquete_powerbi.zip para llevar a Power BI (Windows)
+```
+
+> Las consultas Power Query (M) están escritas pero **no se ejecutaron en Power BI**.
 
 **Contacto**
 
