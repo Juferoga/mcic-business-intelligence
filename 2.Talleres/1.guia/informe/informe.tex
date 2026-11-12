@@ -16,7 +16,12 @@
 \renewcommand{\UDencabezado}{Taller 1 -- NovaRetail 360}
 
 \newcommand{\cop}[1]{\$\,#1}
-\newcommand{\rojo}[1]{{\color{udrojoosc}\bfseries #1}}
+% Acento azul en lugar del rojo de la plantilla, para que combine con el logo de la MCIC
+% (#085C83 y #0AA8E6); #1291C0 es el azur institucional de la UD.
+\definecolor{udrojo}{HTML}{1291C0}
+\definecolor{udrojoosc}{HTML}{085C83}
+\hypersetup{linkcolor=udrojoosc, citecolor=udrojoosc, urlcolor=udrojoosc}
+\newcommand{\destacar}[1]{{\color{udrojoosc}\bfseries #1}}
 
 \begin{document}
 \UDportada
@@ -37,7 +42,7 @@ datos, cómo se modeló la información y qué dicen los números una vez depura
         registraron 13 incidencias con regla, evidencia, impacto y decisión.
   \item \textbf{Ventas netas.} \cop{699,4} millones, \cop{736,9} millones brutos; el descuento promedio
         efectivo es 5,09\,\%.
-  \item \textbf{Metas.} \rojo{Ninguna} de las 30 combinaciones mes--región alcanza su meta; el cumplimiento
+  \item \textbf{Metas.} \destacar{Ninguna} de las 30 combinaciones mes--región alcanza su meta; el cumplimiento
         global es 40,8\,\%, y varía muy poco entre regiones (38,7\,\% a 41,8\,\%).
   \item \textbf{Devoluciones.} 4,15\,\% de las unidades (4,28\,\% del valor); Tecnología concentra el
         problema con 6,10\,\%.

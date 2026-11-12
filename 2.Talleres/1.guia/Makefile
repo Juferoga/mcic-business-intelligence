@@ -1,7 +1,7 @@
 UD ?= $(HOME)/repos/ud/maestria/mcic/.UniversidadDistrital-manual-marca/plantillas-latex
 TEX = tectonic -Z search-path=$(UD)
 
-.PHONY: todo portal datos paquete guia informe presentacion revisar
+.PHONY: todo portal datos paquete guia informe presentacion revisar entrega
 todo: datos portal informe presentacion revisar
 
 datos:
@@ -32,3 +32,15 @@ paquete:
 
 guia:
 	cd guia-powerbi && $(TEX) guia_powerbi.tex
+
+# Zip para subir al aula virtual ("Desarrollo Laboratorio PQ")
+ENTREGA = juan-rodriguez-20261595004-lab-novaretail
+entrega:
+	rm -rf $(ENTREGA) $(ENTREGA).zip && mkdir -p $(ENTREGA)/salida
+	cp informe/informe.pdf presentacion/presentacion.pdf NovaRetail360.pbix README.md $(ENTREGA)/
+	cp -R evidencias_powerbi power_query sql pipeline $(ENTREGA)/
+	cp -R salida/datos_limpios salida/figuras salida/novaretail.db salida/bitacora_calidad.csv \
+	      salida/auditoria_rechazados.csv salida/resultados.json $(ENTREGA)/salida/
+	find $(ENTREGA) -name '.DS_Store' -delete
+	zip -qr $(ENTREGA).zip $(ENTREGA) && rm -rf $(ENTREGA)
+	@echo "Listo: $(ENTREGA).zip"

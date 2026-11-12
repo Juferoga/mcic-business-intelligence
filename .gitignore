@@ -59,3 +59,7 @@ Thumbs.db
 
 # Artefactos derivados (regenerar con `make paquete`)
 2.Talleres/1.guia/paquete_powerbi.zip
+
+# Zip de entrega (se genera con make entrega)
+2.Talleres/1.guia/juan-rodriguez-20261595004-lab-novaretail*
+2.Talleres/2.modelamiento/entrega/

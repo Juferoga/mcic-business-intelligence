@@ -6,9 +6,6 @@ Lee los CSV originales de ../ y produce en ../salida/:
   auditoria_rechazados.csv   registros apartados (nunca se borran en silencio)
   bitacora_calidad.csv       una fila por incidencia: regla, evidencia, impacto, decisión
   novaretail.db              SQLite con tablas operacionales + esquema estrella
-
-Es el equivalente en Python de las consultas de Power Query de ../power_query/.
-Ejecutar:  python3 pipeline/limpieza.py
 """
 import csv
 import re
