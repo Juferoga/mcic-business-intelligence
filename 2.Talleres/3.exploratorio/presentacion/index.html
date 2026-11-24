@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 3 · NovaRetail 360 · Análisis exploratorio</title>
+<style>
+  :root {
+    --ink: #1d2733; --muted: #5d6b7a; --line: #dde3ea; --bg: #f6f8fa; --card: #ffffff;
+    --blue: #2B5A97; --red: #C0504D; --amber: #E8A33D; --green: #2f7d4f; --gray: #7A8794;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; background: #e9edf1; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); }
+  .deck { height: 100%; display: grid; place-items: center; }
+  .slide {
+    display: none; width: min(96vw, calc(94vh * 16 / 9)); aspect-ratio: 16 / 9;
+    background: var(--card); border-radius: 14px; box-shadow: 0 10px 40px rgba(20,35,55,.15);
+    padding: 4.2% 5.5%; position: relative; overflow: hidden; flex-direction: column;
+    font-size: min(1.55vw, 2.75vh);
+  }
+  .slide.active { display: flex; }
+  .kicker { font-size: .78em; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 700; margin-bottom: .6em; }
+  h1 { font-size: 2.6em; line-height: 1.1; letter-spacing: -.01em; }
+  h2 { font-size: 1.8em; line-height: 1.15; margin-bottom: .7em; letter-spacing: -.01em; }
+  p, li { font-size: 1em; line-height: 1.45; }
+  .muted { color: var(--muted); }
+  .grow { flex: 1; min-height: 0; }
+  .foot { position: absolute; bottom: 3%; left: 5.5%; right: 5.5%; display: flex; justify-content: space-between; font-size: .68em; color: var(--muted); }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2em; align-items: center; }
+  .cols-60 { display: grid; grid-template-columns: 1.35fr 1fr; gap: 2em; align-items: center; }
+  img.chart { width: 100%; max-height: 100%; object-fit: contain; border: 1px solid var(--line); border-radius: 8px; }
+  .chart-box { min-height: 0; height: 100%; display: flex; align-items: center; }
+
+  /* Portada */
+  .cover { justify-content: center; background: linear-gradient(135deg, #1f3f6b 0%, #2B5A97 60%, #3a73b8 100%); color: #fff; }
+  .cover .kicker { color: #bcd3f0; }
+  .cover .q { margin-top: 1.4em; font-size: 1.15em; max-width: 34em; color: #e3ecf8; line-height: 1.45; }
+  .cover .team { margin-top: 2.2em; font-size: .85em; color: #bcd3f0; }
+  .cover .foot { color: #bcd3f0; }
+
+  /* Flujo */
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: .8em; margin-top: .4em; }
+  .step { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: .9em .9em 1em; position: relative; }
+  .step .n { display: inline-grid; place-items: center; width: 1.7em; height: 1.7em; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-size: .8em; margin-bottom: .5em; }
+  .step h3 { font-size: .95em; margin-bottom: .35em; }
+  .step p { font-size: .78em; color: var(--muted); line-height: 1.4; }
+  .step code { font-size: .92em; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #eef2f6; padding: .05em .3em; border-radius: 4px; color: #23466f; }
+
+  /* Comprobaciones */
+  .checks { display: grid; grid-template-columns: 1fr 1fr; gap: .9em 1.4em; }
+  .check { display: grid; grid-template-columns: 1.6em 1fr; gap: .6em; align-items: start; padding: .8em 1em; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+  .tick { width: 1.6em; height: 1.6em; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: .85em; }
+  .check h3 { font-size: .95em; margin-bottom: .2em; }
+  .check p { font-size: .8em; color: var(--muted); }
+
+  .equal { display: flex; align-items: stretch; gap: 1em; margin: .6em 0 1em; }
+  .eq-card { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: .8em 1em; background: var(--bg); }
+  .eq-card .lbl { font-size: .72em; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .eq-card .val { font-size: 1.45em; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: .15em; }
+  .eq-sign { display: grid; place-items: center; font-size: 1.6em; color: var(--green); font-weight: 700; }
+
+  /* Cifras */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8em; }
+  .stat { border-left: 4px solid var(--blue); padding: .2em 0 .2em .8em; }
+  .stat .v { font-size: 1.7em; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: .78em; color: var(--muted); }
+  .stat.red { border-color: var(--red); } .stat.amber { border-color: var(--amber); }
+
+  table { border-collapse: collapse; width: 100%; font-size: .85em; font-variant-numeric: tabular-nums; }
+  th, td { padding: .45em .6em; text-align: right; border-bottom: 1px solid var(--line); }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 600; font-size: .85em; }
+  td.hi { color: var(--red); font-weight: 700; }
+
+  ul.clean { list-style: none; padding: 0; }
+  ul.clean li { padding-left: 1.2em; position: relative; margin-bottom: .55em; }
+  ul.clean li::before { content: ""; position: absolute; left: 0; top: .55em; width: .45em; height: .45em; border-radius: 50%; background: var(--blue); }
+
+  .answer { background: #eef4fb; border: 1px solid #cfe0f3; border-radius: 12px; padding: 1.2em 1.4em; font-size: 1.1em; line-height: 1.5; }
+  .answer strong { color: var(--blue); }
+
+  .nav { position: fixed; bottom: 14px; right: 18px; display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); }
+  .nav button { border: 1px solid #c9d2dc; background: #fff; border-radius: 8px; width: 34px; height: 30px; cursor: pointer; font-size: 15px; color: var(--ink); }
+  .nav button:hover { background: #f1f4f7; }
+  @media print {
+    html, body { background: #fff; }
+    .nav { display: none; }
+    .deck { display: block; }
+    .slide { display: flex !important; width: 100%; box-shadow: none; border-radius: 0; page-break-after: always; font-size: 12pt; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- 1 Portada -->
+  <section class="slide cover">
+    <div class="kicker">Laboratorio 3 · Inteligencia de Negocios · UDistrital</div>
+    <h1>NovaRetail 360:<br>¿qué reduce los ingresos netos?</h1>
+    <p class="q">Análisis exploratorio en Python sobre la base del equipo. Explicamos qué se hizo, cómo se comprobó y qué se encontró.</p>
+    <p class="team">Juan Felipe Rodríguez Galindo · Carlos Stiven Mora Hoyos<br>Ing. Nancy Gélvez Garcia PhD.</p>
+    <div class="foot"><span>pandas · sqlite3 · matplotlib</span><span>1 / 10</span></div>
+  </section>
+
+  <!-- 2 Pregunta y datos -->
+  <section class="slide">
+    <div class="kicker">El punto de partida</div>
+    <h2>La pregunta y los datos</h2>
+    <div class="cols grow">
+      <div>
+        <p style="font-size:1.25em; line-height:1.4">¿Qué está reduciendo los ingresos netos: <strong>los descuentos</strong>, <strong>las devoluciones</strong> o <strong>la composición de las ventas</strong>?</p>
+        <p class="muted" style="margin-top:1.2em">Usamos la misma base SQLite de los laboratorios 1 y 2: las tablas depuradas y el modelo estrella.</p>
+      </div>
+      <div>
+        <table>
+          <tr><th>Tabla</th><th>Filas</th></tr>
+          <tr><td><code>ventas</code></td><td>1.193</td></tr>
+          <tr><td><code>devoluciones</code></td><td>70 (174 unidades)</td></tr>
+          <tr><td><code>clientes</code></td><td>120</td></tr>
+          <tr><td><code>productos</code></td><td>40</td></tr>
+          <tr><td><code>FactVentas</code> (lab 2)</td><td>1.193</td></tr>
+        </table>
+        <p class="muted" style="font-size:.78em; margin-top:.8em">La referencia de la clase tiene 1.192 ventas. Nosotros conservamos V00410 imputando su precio de lista (regla R6 de la bitácora del lab 1).</p>
+      </div>
+    </div>
+    <div class="foot"><span>NovaRetail 360 · Lab 3</span><span>2 / 10</span></div>
+  </section>
+
+  <!-- 3 Qué se hizo -->
+  <section class="slide">
+    <div class="kicker">Qué se hizo</div>
+    <h2>Cinco pasos, del dato a la respuesta</h2>
+    <div class="flow">
+      <div class="step"><span class="n">1</span><h3>Cargar</h3><p>Leer las tablas del lab 1 desde SQLite con <code>pd.read_sql</code> y revisar los tipos de columna.</p></div>
+      <div class="step"><span class="n">2</span><h3>Combinar</h3><p>Sumar devoluciones <strong>por venta</strong> y luego <code>merge</code> con clientes y productos (<code>how='left'</code>).</p></div>
+      <div class="step"><span class="n">3</span><h3>Calcular</h3><p>Importe bruto → descuento → importe neto → valor devuelto → <strong>ventas netas</strong>.</p></div>
+      <div class="step"><span class="n">4</span><h3>Explorar</h3><p><code>describe</code>, pérdida total, <code>groupby</code> por categoría, canal y región, correlación y atípicos (IQR).</p></div>
+      <div class="step"><span class="n">5</span><h3>Graficar</h3><p>Cinco gráficas, cada una con la frase de lo que muestra, y hallazgos con fuente.</p></div>
+    </div>
+    <p class="muted" style="margin-top:1.4em; font-size:.88em">Regla aplicada en todo el análisis: los porcentajes se calculan <strong>dividiendo totales</strong>, nunca promediando porcentajes.</p>
+    <div class="foot"><span>Cuaderno: notebook/Lab3_NovaRetail_equipo.ipynb</span><span>3 / 10</span></div>
+  </section>
+
+  <!-- 4 Cómo se comprobó -->
+  <section class="slide">
+    <div class="kicker">Cómo se comprobó</div>
+    <h2>El total de Python cuadra con SQL al peso</h2>
+    <div class="equal">
+      <div class="eq-card"><div class="lbl">Ventas netas · Python (pandas)</div><div class="val">$669.412.345</div></div>
+      <div class="eq-sign">=</div>
+      <div class="eq-card"><div class="lbl">Ventas netas · SQL (FactVentas)</div><div class="val">$669.412.345</div></div>
+      <div class="eq-sign">=</div>
+      <div class="eq-card"><div class="lbl">Control C2 · Lab 2</div><div class="val">$669.412.345</div></div>
+    </div>
+    <div class="checks">
+      <div class="check"><span class="tick">✓</span><div><h3>No se duplicaron filas</h3><p>Después de los tres <code>merge</code> siguen siendo 1.193 filas, porque las devoluciones se agregaron por venta antes de unir.</p></div></div>
+      <div class="check"><span class="tick">✓</span><div><h3>Tipos correctos</h3><p><code>cantidad</code> y <code>precio_unitario</code> quedaron como int64 y <code>descuento</code> como float64 (0,05 y no 5).</p></div></div>
+      <div class="check"><span class="tick">✓</span><div><h3>Diferencia explicada</h3><p>Frente a la referencia, el bruto y las netas suben solo $579.200 (V00410: 2 × $289.600). Los porcentajes coinciden al decimal.</p></div></div>
+      <div class="check"><span class="tick">✓</span><div><h3>Ejecución limpia</h3><p>El cuaderno corre de principio a fin sin errores (<em>Restart Kernel and Run All</em>) y genera las cinco gráficas.</p></div></div>
+    </div>
+    <div class="foot"><span>Celda 2.4 del cuaderno</span><span>4 / 10</span></div>
+  </section>
+
+  <!-- 5 Cascada -->
+  <section class="slide">
+    <div class="kicker">Hallazgo 1</div>
+    <h2>Se pierde el 9,2 %, y los descuentos pesan un poco más</h2>
+    <div class="cols-60 grow">
+      <div class="chart-box"><img class="chart" src="img/4_1_cascada.png" alt="Gráfica de cascada: importe bruto 736,9 millones, descuentos 37,5, devoluciones 30,0, ventas netas 669,4"></div>
+      <div>
+        <div class="stats" style="grid-template-columns:1fr">
+          <div class="stat"><div class="v">$67,5 M</div><div class="l">pérdida entre bruto y netas (9,2 % del bruto)</div></div>
+          <div class="stat amber"><div class="v">55,6 %</div><div class="l">de la pérdida son descuentos ($37,5 M)</div></div>
+          <div class="stat red"><div class="v">44,4 %</div><div class="l">de la pérdida son devoluciones ($30,0 M)</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Fuente: 3.2 y gráfica 4.1</span><span>5 / 10</span></div>
+  </section>
+
+  <!-- 6 Dónde -->
+  <section class="slide">
+    <div class="kicker">Hallazgo 2</div>
+    <h2>Tecnología pierde más, y es por devoluciones</h2>
+    <div class="cols grow">
+      <div class="chart-box"><img class="chart" src="img/4_2_categoria.png" alt="Barras apiladas de pérdida por categoría: descuento y devolución como porcentaje del bruto"></div>
+      <div>
+        <table>
+          <tr><th>% del bruto</th><th>Descuento</th><th>Devolución</th><th>Pérdida</th></tr>
+          <tr><td>Tecnología</td><td>4,4</td><td class="hi">6,0</td><td>10,4</td></tr>
+          <tr><td>Accesorios</td><td>5,1</td><td>4,2</td><td>9,3</td></tr>
+          <tr><td>Oficina</td><td>5,0</td><td>3,4</td><td>8,4</td></tr>
+          <tr><td>Hogar</td><td class="hi">6,0</td><td>2,3</td><td>8,3</td></tr>
+        </table>
+        <p class="muted" style="font-size:.8em; margin-top:.9em"><strong>Por canal</strong>, Tienda pierde más (10,3 %) por devoluciones (5,1 %). <strong>Por región</strong>, Cali pierde más (10,0 %) y Bucaramanga menos (7,8 %).</p>
+      </div>
+    </div>
+    <div class="foot"><span>Fuente: 3.3 y gráfica 4.2</span><span>6 / 10</span></div>
+  </section>
+
+  <!-- 7 Descuento -->
+  <section class="slide">
+    <div class="kicker">Hallazgo 3</div>
+    <h2>Los descuentos no están comprando volumen</h2>
+    <div class="cols-60 grow">
+      <div class="chart-box"><img class="chart" src="img/4_3_descuento.png" alt="Unidades promedio por venta según el descuento: entre 3,4 y 3,6"></div>
+      <div>
+        <table>
+          <tr><th>Descuento</th><th>Ventas</th><th>Unid. prom.</th></tr>
+          <tr><td>0 %</td><td>586</td><td>3,47</td></tr>
+          <tr><td>5 %</td><td>191</td><td>3,62</td></tr>
+          <tr><td>10 %</td><td>198</td><td>3,62</td></tr>
+          <tr><td>15 %</td><td>218</td><td>3,43</td></tr>
+        </table>
+        <div class="stat" style="margin-top:1em"><div class="v">0,004</div><div class="l">correlación entre descuento y cantidad: prácticamente nula</div></div>
+      </div>
+    </div>
+    <div class="foot"><span>Fuente: 3.4 y gráfica 4.3</span><span>7 / 10</span></div>
+  </section>
+
+  <!-- 8 Atípicos y meses -->
+  <section class="slide">
+    <div class="kicker">Revisiones antes de concluir</div>
+    <h2>Atípicos y devoluciones por mes</h2>
+    <div class="cols grow">
+      <div style="height:100%; display:flex; flex-direction:column; gap:.6em; min-height:0">
+        <div class="chart-box" style="flex:1"><img class="chart" src="img/4_4_boxplot.png" alt="Diagrama de caja de ventas netas por categoría"></div>
+        <p style="font-size:.82em"><strong>20 ventas atípicas</strong> (sobre $1,68 M): todas de 6 unidades de los productos más caros (P035 a P040). Son ventas reales, así que <strong>no se eliminan</strong>.</p>
+      </div>
+      <div style="height:100%; display:flex; flex-direction:column; gap:.6em; min-height:0">
+        <div class="chart-box" style="flex:1"><img class="chart" src="img/4_5_mensual.png" alt="Descuentos y devoluciones por mes"></div>
+        <p style="font-size:.82em">Las devoluciones caen del 7,0 % del bruto en febrero al 1,6 % en junio, en parte porque <strong>las ventas recientes aún no han tenido tiempo de devolverse</strong>.</p>
+      </div>
+    </div>
+    <div class="foot"><span>Fuente: 3.5, gráficas 4.4 y 4.5</span><span>8 / 10</span></div>
+  </section>
+
+  <!-- 9 Respuesta -->
+  <section class="slide">
+    <div class="kicker">Respuesta</div>
+    <h2>¿Qué reduce los ingresos netos?</h2>
+    <div class="answer">
+      Primero los <strong>descuentos</strong> (5,1 % del bruto) y después las <strong>devoluciones</strong> (4,1 %). <strong>La composición no es la causa</strong>: las categorías aportan entre 23 % y 26 % de las ventas netas y los canales cerca del 33 % cada uno.
+    </div>
+    <div class="cols" style="margin-top:1.4em; align-items:start">
+      <div>
+        <p class="kicker" style="color:var(--amber)">Palanca 1 · Descuentos</p>
+        <p>No aumentan las unidades vendidas. Vale la pena revisar a quién y cuándo se dan.</p>
+      </div>
+      <div>
+        <p class="kicker" style="color:var(--red)">Palanca 2 · Devoluciones</p>
+        <p>Se concentran en Tecnología (6,0 %) y en el canal Tienda (5,1 %).</p>
+      </div>
+    </div>
+    <div class="foot"><span>Sección 5 del cuaderno</span><span>9 / 10</span></div>
+  </section>
+
+  <!-- 10 Limitaciones -->
+  <section class="slide">
+    <div class="kicker">Limitaciones</div>
+    <h2>Lo que estos datos no permiten afirmar</h2>
+    <ul class="clean" style="font-size:1.05em">
+      <li><strong>Datos sintéticos</strong> de un solo semestre.</li>
+      <li><strong>Correlación no es causalidad:</strong> el descuento podría atraer clientes nuevos, algo que estos datos no miden.</li>
+      <li><strong>Las devoluciones se asignan al mes de la venta</strong>, así que mayo y junio se ven mejor de lo que serán.</li>
+      <li><strong>27 ventas quedan en $0</strong> porque se devolvieron completas. Se conservan porque son parte de la pérdida.</li>
+    </ul>
+    <p class="muted" style="margin-top:1.6em">Gracias · ¿Preguntas?</p>
+    <div class="foot"><span>NovaRetail 360 · Lab 3</span><span>10 / 10</span></div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="Anterior">‹</button>
+  <span id="count">1 / 10</span>
+  <button id="next" aria-label="Siguiente">›</button>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  let i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1)) || 1) - 1));
+  const count = document.getElementById('count');
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    count.textContent = `${i + 1} / ${slides.length}`;
+    history.replaceState(null, '', `#${i + 1}`);
+  }
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+    if (e.key === 'f') document.documentElement.requestFullscreen?.();
+  });
+  document.getElementById('prev').onclick = () => show(i - 1);
+  document.getElementById('next').onclick = () => show(i + 1);
+  show(i);
+</script>
+</body>
+</html>
