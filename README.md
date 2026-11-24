@@ -27,7 +27,8 @@ Repositorio de la asignatura *Inteligencia de Negocios* (Maestría). Aquí se co
 | Entrega | Tema | Carpeta |
 |---|---|---|
 | Taller 1 | Guía *NovaRetail 360*: limpieza de datos, Power Query, modelo en estrella y SQL, informe y presentación | [`2.Talleres/1.guia/`](2.Talleres/1.guia/) |
-| Proyecto final | Proyecto integrador de inteligencia de negocios (con Carlos Mora): SQL, esquema estrella, modelo de conversión y simulación Monte Carlo. Submódulo: [`mcic-inteligencia-negocios`](4.ProyectoFinal/mcic-inteligencia-negocios/). Además, datos base de los sorteos de loterías de Colombia (corte 2026-09-02) y panel en Excel | [`4.ProyectoFinal/`](4.ProyectoFinal/) |
+| Taller 2 | Laboratorio de modelamiento dimensional e indicadores (caso NovaRetail 360, con Carlos Mora): esquema estrella, SQL y KPI frente a metas comerciales | [`2.Talleres/2.modelamiento/`](2.Talleres/2.modelamiento/) |
+| Proyecto final | *¿En qué invertir para crecer el próximo año?* (con Carlos Mora): 20.000 oportunidades comerciales de CredCorp Capital validadas con SQL (DuckDB), modelo en estrella, KPI, modelo de conversión y simulación Monte Carlo de 10.000 escenarios; informe y [presentación en línea](https://fozzy3.github.io/mcic-inteligencia-negocios/). Submódulo: [`mcic-inteligencia-negocios`](4.ProyectoFinal/mcic-inteligencia-negocios/). Se conservan los datos base de los sorteos de loterías de Colombia (corte 2026-09-02) y el panel en Excel | [`4.ProyectoFinal/`](4.ProyectoFinal/) |
 
 ## Estructura del repositorio
 
